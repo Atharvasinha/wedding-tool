@@ -83,50 +83,32 @@ export default async function DashboardPage() {
         )}
       </section>
 
-      <section className="mt-12 grid grid-cols-3 gap-10">
-        <div className="col-span-2">
-          <SectionTitle title="Upcoming payments" hint="next 5" />
-          {upcoming.length === 0 ? (
-            <EmptyState title="No upcoming payments" description="Add a payment from a contract or vendor page." className="mt-5" />
-          ) : (
-            <div className="mt-5 divide-y divide-rule rounded-md border border-rule bg-cream-soft/40">
-              {upcoming.map((p) => (
-                <div key={p.id} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-5 px-4 py-3">
-                  <div>
-                    <div className="text-sm text-ink">{p.description}</div>
-                    <div className="text-xs text-ink-muted mt-0.5">
-                      {p.contract?.vendor.name ?? "One-off"} · due {formatDate(p.due_date)}
-                    </div>
+      <section className="mt-12">
+        <SectionTitle title="Upcoming payments" hint="next 5" />
+        {upcoming.length === 0 ? (
+          <EmptyState title="No upcoming payments" description="Add a payment from a contract or vendor page." className="mt-5" />
+        ) : (
+          <div className="mt-5 divide-y divide-rule rounded-md border border-rule bg-cream-soft/40">
+            {upcoming.map((p) => (
+              <div key={p.id} className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-5 px-4 py-3">
+                <div>
+                  <div className="text-sm text-ink">{p.description}</div>
+                  <div className="text-xs text-ink-muted mt-0.5">
+                    {p.contract?.vendor.name ?? "One-off"} · due {formatDate(p.due_date)}
                   </div>
-                  <Money cents={p.amount} className="text-sm" />
-                  <PayerChip
-                    current={{ id: p.payer.id, name: p.payer.name, display_color: p.payer.display_color }}
-                    payers={payersLite}
-                    entity={{ type: "payment", id: p.id }}
-                    size="sm"
-                  />
-                  <MarkPaidButton id={p.id} />
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div>
-          <SectionTitle title="Recent activity" />
-          {activity.length === 0 ? (
-            <EmptyState title="Quiet so far" className="mt-5" />
-          ) : (
-            <ul className="mt-5 space-y-3">
-              {activity.map((a) => (
-                <li key={a.id} className="text-xs text-ink-soft">
-                  <div className="text-ink-muted mono">{formatDateShort(a.created_at)}</div>
-                  <div className="leading-snug">{a.diff_summary ?? `${a.action} · ${a.entity_type}`}</div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                <Money cents={p.amount} className="text-sm" />
+                <PayerChip
+                  current={{ id: p.payer.id, name: p.payer.name, display_color: p.payer.display_color }}
+                  payers={payersLite}
+                  entity={{ type: "payment", id: p.id }}
+                  size="sm"
+                />
+                <MarkPaidButton id={p.id} />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

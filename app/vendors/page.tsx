@@ -37,6 +37,8 @@ export default async function VendorsPage() {
           className="mt-10"
         />
       ) : (
+        <>
+        <CompareLinks vendors={vendors} />
         <div className="mt-8 grid grid-cols-5 gap-4">
           {KANBAN_COLUMNS.map((col) => {
             const items = byColumn.get(col.id) ?? [];
@@ -57,7 +59,33 @@ export default async function VendorsPage() {
             );
           })}
         </div>
+        </>
       )}
+    </div>
+  );
+}
+
+// Categories where you've gathered 2+ vendors → comparison links
+function CompareLinks({ vendors }: { vendors: Awaited<ReturnType<typeof getActiveVendors>> }) {
+  const byCategory = new Map<string, number>();
+  for (const v of vendors) {
+    byCategory.set(v.category, (byCategory.get(v.category) ?? 0) + 1);
+  }
+  const comparable = [...byCategory.entries()].filter(([, n]) => n >= 2);
+  if (comparable.length === 0) return null;
+  return (
+    <div className="mt-5 flex items-center gap-3 text-xs">
+      <span className="text-ink-muted uppercase tracking-widest text-[10px]">Compare</span>
+      {comparable.map(([cat, n]) => (
+        <Link
+          key={cat}
+          href={`/vendors/compare/${cat}` as never}
+          className="inline-flex items-center gap-1 rounded-full border border-rule bg-cream-soft px-2.5 py-1 text-ink-soft hover:bg-cream-deep"
+        >
+          {cat.replace(/_/g, " ")}
+          <span className="mono tabular text-ink-muted">({n})</span>
+        </Link>
+      ))}
     </div>
   );
 }

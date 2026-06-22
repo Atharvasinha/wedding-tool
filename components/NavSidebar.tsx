@@ -12,31 +12,48 @@ const links = [
 
 export function NavSidebar() {
   return (
-    <aside className="w-56 shrink-0 border-r border-rule bg-cream-soft px-5 py-7 hidden md:flex md:flex-col gap-7">
-      <div>
-        <div className="display text-[22px] leading-tight">
-          Atharva <span className="italic">&amp;</span> Celesia
+    <>
+      {/* Desktop: left sidebar */}
+      <aside className="w-56 shrink-0 border-r border-rule bg-cream-soft px-5 py-7 hidden md:flex md:flex-col gap-7">
+        <div>
+          <div className="display text-[22px] leading-tight">
+            Atharva <span className="italic">&amp;</span> Celesia
+          </div>
+          <div className="text-xs text-ink-muted mt-1 mono">12 · 11 · 2027</div>
         </div>
-        <div className="text-xs text-ink-muted mt-1 mono">12 · 11 · 2027</div>
-      </div>
 
-      <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1">
+          {links.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href as never}
+              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-ink-soft hover:bg-cream-deep hover:text-ink transition-colors"
+            >
+              <Icon size={16} strokeWidth={1.75} />
+              {label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-auto text-[11px] text-ink-muted leading-relaxed">
+          Camp Lucy · Texas<br />
+          ~125 guests
+        </div>
+      </aside>
+
+      {/* Mobile: bottom tab bar */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-cream border-t border-rule flex justify-around py-1.5 shadow-lg">
         {links.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
             href={href as never}
-            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-ink-soft hover:bg-cream-deep hover:text-ink transition-colors"
+            className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] text-ink-muted hover:text-ink"
           >
-            <Icon size={16} strokeWidth={1.75} />
-            {label}
+            <Icon size={18} strokeWidth={1.75} />
+            <span>{label}</span>
           </Link>
         ))}
       </nav>
-
-      <div className="mt-auto text-[11px] text-ink-muted leading-relaxed">
-        Camp Lucy · Texas<br />
-        ~125 guests
-      </div>
-    </aside>
+    </>
   );
 }

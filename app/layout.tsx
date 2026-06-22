@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { NavSidebar } from "@/components/NavSidebar";
+import { GlobalActivityRail } from "@/components/GlobalActivityRail";
 import "./globals.css";
 
 const display = Fraunces({
@@ -33,7 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-cream text-ink">
         <div className="flex min-h-screen">
           <NavSidebar />
-          <main className="flex-1 overflow-x-hidden">{children}</main>
+          <main className="flex-1 overflow-x-hidden min-w-0 pb-20 md:pb-0">{children}</main>
+          <GlobalActivityRail />
         </div>
       </body>
     </html>

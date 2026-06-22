@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/db/client";
 import { getBudgetCategory } from "@/lib/db/budget";
 import { getPaymentsForCategory } from "@/lib/db/payments";
 import { getAllPayers } from "@/lib/db/payers";
 import { Money } from "@/components/Money";
 import { PayerChip } from "@/components/PayerChip";
 import { MarkPaidButton } from "@/components/MarkPaidButton";
+import { StatusBadge } from "@/components/StatusBadge";
 import { EmptyState } from "@/components/EmptyState";
 import { formatDate, variance } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import type { vendor_category } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +22,17 @@ export default async function CategoryDrilldown({ params }: { params: { id: stri
   ]);
   if (!category) notFound();
 
-  const payments = await getPaymentsForCategory(category.name);
+  const [payments, vendorsInCategory] = await Promise.all([
+    getPaymentsForCategory(category.name),
+    prisma.vendors.findMany({
+      where: {
+        archived_at: null,
+        category: { in: categoriesFor(category.name) },
+      },
+      include: { estimates: true, contracts: true },
+      orderBy: { updated_at: "desc" },
+    }),
+  ]);
   const payersLite = payers.map((p) => ({ id: p.id, name: p.name, display_color: p.display_color }));
 
   const committed = payments
@@ -40,6 +53,35 @@ export default async function CategoryDrilldown({ params }: { params: { id: stri
         <Stat label="Committed" value={<Money cents={committed} className="text-gold" />} />
         <Stat label="Paid" value={<Money cents={paid} className="text-teal" />} />
       </div>
+
+      {vendorsInCategory.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="display text-[20px] italic border-b border-rule pb-2">
+            Vendors <span className="text-[11px] uppercase tracking-widest text-ink-muted ml-2">{vendorsInCategory.length}</span>
+          </h2>
+          <div className="mt-5 divide-y divide-rule rounded-md border border-rule bg-cream-soft/40">
+            {vendorsInCategory.map((v) => {
+              const topAmount =
+                v.contracts[0]?.total_contract_amount ??
+                (v.estimates.length
+                  ? v.estimates.reduce((max, e) => (e.total_amount > max ? e.total_amount : max), v.estimates[0].total_amount)
+                  : null);
+              return (
+                <Link key={v.id} href={`/vendors/${v.id}` as never} className="grid grid-cols-[1fr_auto_auto] items-center gap-5 px-4 py-3 hover:bg-cream-deep transition-colors">
+                  <div>
+                    <div className="text-sm">{v.name}</div>
+                    <div className="text-[11px] text-ink-muted mt-0.5">{v.category.replace(/_/g, " ")}</div>
+                  </div>
+                  <StatusBadge value={v.status} />
+                  <div className="text-sm w-24 text-right">
+                    {topAmount ? <Money cents={topAmount} className="text-sm" /> : <span className="text-ink-muted">—</span>}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-10">
         <h2 className="display text-[20px] italic border-b border-rule pb-2">Payments</h2>
@@ -97,4 +139,19 @@ function Stat({ label, value, sub }: { label: string; value: React.ReactNode; su
       {sub ? <div className="text-xs mt-1">{sub}</div> : null}
     </div>
   );
+}
+
+// Map budget_categories.name → matching vendor_category enum value(s)
+function categoriesFor(name: string): vendor_category[] {
+  const map: Record<string, vendor_category[]> = {
+    "Food & Beverage": ["catering"],
+    "Venue Fees": ["venue"],
+    "Guest Travel & Rooms": ["accommodation", "transportation"],
+    "Misc Rentals": ["rentals", "florist", "dj_band"],
+    "Attire": ["attire", "hair_makeup"],
+    "Photography": ["photography", "videography"],
+    "Planner / Coordination": ["planner", "officiant", "priest"],
+    "Invites & Favors": ["stationery"],
+  };
+  return map[name] ?? [];
 }
