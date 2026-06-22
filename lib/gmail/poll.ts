@@ -1,6 +1,3 @@
-import * as fs from "node:fs";
-import * as path from "node:path";
-import * as os from "node:os";
 import type { gmail_v1 } from "googleapis";
 import { prisma } from "@/lib/db/client";
 import { getGmailClientFromRefreshToken } from "@/lib/gmail/client";
@@ -15,9 +12,10 @@ const INBOX_QUERY = "newer_than:14d category:primary -in:chats -in:drafts";
 const SENT_QUERY = "in:sent newer_than:14d -in:chats -in:drafts";
 const PAGE_SIZE = 50;
 
-// Local attachment store — outside node_modules + .next so it persists across
-// rebuilds. PDFs only, capped at 10MB each. Path is also OS-portable.
-const ATTACHMENT_ROOT = path.join(os.homedir(), ".wedding-pg", "attachments");
+// PDFs only, capped at 10MB each. We store METADATA only (filename, gmail
+// attachment id, size) — the actual bytes are fetched on demand from Gmail
+// when the user clicks AI parse. This avoids needing persistent disk on
+// serverless platforms like Vercel.
 const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
 
 export type PollResult = {
@@ -97,8 +95,8 @@ async function pollOne(
       const autoHandled =
         direction === "outgoing" || (direction === "incoming" && parsedIntent === "informational");
 
-      // Pull and save PDF attachments — only useful for transactional emails.
-      const attachments = await maybeSavePdfAttachments(gmail, m.id, detail, parsedIntent);
+      // Index PDF attachments — metadata only, fetched on demand later.
+      const attachments = indexPdfAttachments(detail, parsedIntent);
       if (attachments.length) result.attachments_saved += attachments.length;
 
       await prisma.email_items.create({
@@ -144,22 +142,27 @@ async function pollOne(
 }
 
 // ─── Attachments ─────────────────────────────────────────
+// We index PDF attachment metadata (filename, gmail attachment_id, size) at
+// poll time. The actual bytes are fetched on demand from Gmail when needed
+// (LLM parse). This is serverless-friendly — no disk needed.
 
-type SavedAttachment = {
+export type IndexedAttachment = {
   filename: string;
   mime_type: string;
   size_bytes: number;
-  local_path: string;
+  gmail_message_id: string;
+  gmail_attachment_id: string;
 };
 
-async function maybeSavePdfAttachments(
-  gmail: gmail_v1.Gmail,
-  messageId: string,
+function indexPdfAttachments(
   detail: gmail_v1.Schema$Message,
   intent: string,
-): Promise<SavedAttachment[]> {
-  // Only fetch attachments for emails that likely have a real document
+): IndexedAttachment[] {
+  // Only catalog for emails that likely have a real document
   if (intent === "informational" || intent === "unknown" || intent === "scheduling") return [];
+
+  const messageId = detail.id;
+  if (!messageId) return [];
 
   const parts = walkParts(detail.payload ?? null);
   const pdfs = parts.filter(
@@ -169,37 +172,36 @@ async function maybeSavePdfAttachments(
       (p.body.size ?? 0) > 0 &&
       (p.body.size ?? 0) <= MAX_ATTACHMENT_BYTES,
   );
-  if (pdfs.length === 0) return [];
 
-  const messageDir = path.join(ATTACHMENT_ROOT, messageId);
-  await fs.promises.mkdir(messageDir, { recursive: true });
+  return pdfs.map((part) => ({
+    filename: sanitizeFilename(part.filename ?? "attachment.pdf"),
+    mime_type: "application/pdf",
+    size_bytes: part.body!.size ?? 0,
+    gmail_message_id: messageId,
+    gmail_attachment_id: part.body!.attachmentId!,
+  }));
+}
 
-  const saved: SavedAttachment[] = [];
-  for (const part of pdfs) {
-    try {
-      const attResp = await gmail.users.messages.attachments.get({
-        userId: "me",
-        messageId,
-        id: part.body!.attachmentId!,
-      });
-      const data = attResp.data.data;
-      if (!data) continue;
-      // Gmail returns base64-url-encoded; decode to bytes
-      const bytes = Buffer.from(data, "base64url");
-      const filename = sanitizeFilename(part.filename ?? "attachment.pdf");
-      const localPath = path.join(messageDir, filename);
-      await fs.promises.writeFile(localPath, bytes);
-      saved.push({
-        filename,
-        mime_type: "application/pdf",
-        size_bytes: bytes.length,
-        local_path: localPath,
-      });
-    } catch {
-      // Skip on per-attachment failure; the email row still gets created
-    }
+// On-demand fetcher — called from lib/parsing/llm.ts when feeding PDFs to Claude
+export async function fetchAttachmentBytes(
+  gmailMessageId: string,
+  gmailAttachmentId: string,
+): Promise<Buffer | null> {
+  const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
+  if (!refreshToken) return null;
+  const gmail = getGmailClientFromRefreshToken(refreshToken);
+  try {
+    const resp = await gmail.users.messages.attachments.get({
+      userId: "me",
+      messageId: gmailMessageId,
+      id: gmailAttachmentId,
+    });
+    const data = resp.data.data;
+    if (!data) return null;
+    return Buffer.from(data, "base64url");
+  } catch {
+    return null;
   }
-  return saved;
 }
 
 function walkParts(p: gmail_v1.Schema$MessagePart | null): gmail_v1.Schema$MessagePart[] {

@@ -3,11 +3,11 @@
 // First call writes the cache (~$0.001/email); subsequent calls within 5
 // minutes hit the cache (~$0.0003/email).
 
-import * as fs from "node:fs";
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import type { email_items } from "@prisma/client";
 import { prisma } from "@/lib/db/client";
+import { fetchAttachmentBytes } from "@/lib/gmail/poll";
 import type { Suggestion } from "./workflow";
 
 const HAIKU = "claude-haiku-4-5";
@@ -131,7 +131,13 @@ function vendorContext(
   ].join("\n");
 }
 
-type Attachment = { filename: string; mime_type: string; size_bytes: number; local_path: string };
+type Attachment = {
+  filename: string;
+  mime_type: string;
+  size_bytes: number;
+  gmail_message_id: string;
+  gmail_attachment_id: string;
+};
 
 function emailPrompt(email: email_items, attachmentCount: number): string {
   const lines = [
@@ -153,23 +159,20 @@ function emailPrompt(email: email_items, attachmentCount: number): string {
   return lines.join("\n");
 }
 
-function buildUserContent(email: email_items): Anthropic.ContentBlockParam[] {
+async function buildUserContent(email: email_items): Promise<Anthropic.ContentBlockParam[]> {
   const attachments = parseAttachments(email.attachments_json);
   const blocks: Anthropic.ContentBlockParam[] = [];
 
   // PDFs first so the model can reference them when reading the text
   for (const att of attachments) {
     if (att.mime_type !== "application/pdf") continue;
-    try {
-      const bytes = fs.readFileSync(att.local_path);
-      blocks.push({
-        type: "document",
-        source: { type: "base64", media_type: "application/pdf", data: bytes.toString("base64") },
-        title: att.filename,
-      });
-    } catch {
-      // attachment file missing on disk — silently skip, fall back to text-only
-    }
+    const bytes = await fetchAttachmentBytes(att.gmail_message_id, att.gmail_attachment_id);
+    if (!bytes) continue; // Gmail fetch failed, silently skip
+    blocks.push({
+      type: "document",
+      source: { type: "base64", media_type: "application/pdf", data: bytes.toString("base64") },
+      title: att.filename,
+    });
   }
 
   blocks.push({ type: "text", text: emailPrompt(email, blocks.length) });
@@ -184,7 +187,8 @@ function parseAttachments(json: unknown): Attachment[] {
       a !== null &&
       typeof (a as Attachment).filename === "string" &&
       typeof (a as Attachment).mime_type === "string" &&
-      typeof (a as Attachment).local_path === "string",
+      typeof (a as Attachment).gmail_message_id === "string" &&
+      typeof (a as Attachment).gmail_attachment_id === "string",
   );
 }
 
@@ -224,7 +228,7 @@ export async function aiSuggestForEmail(email: email_items): Promise<AiSuggestRe
     }));
 
   // Build user message content blocks: any PDF attachments first, then the email body
-  const userContent = buildUserContent(email);
+  const userContent = await buildUserContent(email);
 
   const response = await client.messages.create({
     model: HAIKU,
