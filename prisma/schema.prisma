@@ -1,0 +1,411 @@
+// Wedding Tool · Prisma schema (translated from schema.sql)
+// Names kept identical to the SQL. Money fields are BigInt (cents). All timestamps UTC.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum vendor_status {
+  researching
+  contacted
+  estimate_received
+  comparing
+  negotiating
+  contract_sent
+  contracted
+  in_progress
+  delivered
+  declined
+  archived
+}
+
+enum vendor_category {
+  venue
+  catering
+  photography
+  videography
+  dj_band
+  florist
+  rentals
+  hair_makeup
+  attire
+  transportation
+  stationery
+  officiant
+  priest
+  planner
+  accommodation
+  other
+}
+
+enum contract_status {
+  draft
+  sent_for_signature
+  signed
+  completed
+  cancelled
+  disputed
+}
+
+enum payment_method {
+  credit_card
+  check
+  wire
+  cash
+  venmo
+  zelle
+  other
+}
+
+enum task_status {
+  not_started
+  in_progress
+  blocked
+  complete
+  cancelled
+}
+
+enum task_priority {
+  low
+  medium
+  high
+  critical
+}
+
+enum email_intent {
+  estimate
+  invoice
+  receipt
+  contract
+  scheduling
+  informational
+  unknown
+}
+
+enum email_review_status {
+  pending_review
+  processed
+  ignored
+  snoozed
+}
+
+enum email_direction {
+  incoming
+  outgoing
+}
+
+enum payer_type {
+  couple
+  parent
+  family
+  individual
+  sponsored
+  other
+}
+
+// ============================================================
+// REFERENCE TABLES
+// ============================================================
+
+model payers {
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String
+  type            payer_type
+  display_color   String
+  total_committed BigInt?
+  notes           String?
+  display_order   Int      @default(0)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  budget_categories budget_categories[]
+  payments          payments[]
+}
+
+model events {
+  id                    String   @id @default(uuid()) @db.Uuid
+  name                  String
+  date                  DateTime @db.Date
+  start_time            DateTime? @db.Time(6)
+  end_time              DateTime? @db.Time(6)
+  venue                 String?
+  description           String?
+  estimated_guest_count Int?
+  display_color         String
+  display_order         Int      @default(0)
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+
+  vendor_events vendor_events[]
+  tasks         tasks[]
+}
+
+model budget_categories {
+  id               String   @id @default(uuid()) @db.Uuid
+  name             String   @unique
+  baseline_amount  BigInt
+  planned_amount   BigInt
+  default_payer_id String?  @db.Uuid
+  display_color    String
+  display_order    Int      @default(0)
+  notes            String?
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+
+  default_payer payers? @relation(fields: [default_payer_id], references: [id])
+}
+
+// ============================================================
+// CORE ENTITIES
+// ============================================================
+
+model vendors {
+  id            String          @id @default(uuid()) @db.Uuid
+  name          String
+  category      vendor_category
+  contact_name  String?
+  contact_email String?
+  contact_phone String?
+  website       String?
+  status        vendor_status   @default(researching)
+  notes         String?
+  archived_at   DateTime?       @db.Timestamptz(6)
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime        @default(now()) @db.Timestamptz(6)
+
+  vendor_events vendor_events[]
+  estimates     estimates[]
+  contracts     contracts[]
+  tasks         tasks[]
+  email_items   email_items[]
+  receipts      receipts[]
+
+  @@index([status])
+  @@index([category])
+}
+
+model vendor_events {
+  vendor_id String  @db.Uuid
+  event_id  String  @db.Uuid
+  vendor    vendors @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  event     events  @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  @@id([vendor_id, event_id])
+}
+
+model estimates {
+  id                   String   @id @default(uuid()) @db.Uuid
+  vendor_id            String   @db.Uuid
+  received_date        DateTime @db.Date
+  expires_date         DateTime? @db.Date
+  total_amount         BigInt
+  package_name         String?
+  included_summary     String?
+  excluded_summary     String?
+  attachment_file_path String?
+  parsed_from_email_id String?  @db.Uuid
+  status               String   @default("active")
+  notes                String?
+  created_at           DateTime @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime @default(now()) @db.Timestamptz(6)
+
+  vendor    vendors      @relation(fields: [vendor_id], references: [id])
+  email     email_items? @relation(fields: [parsed_from_email_id], references: [id])
+  contracts contracts[]
+
+  @@index([vendor_id])
+}
+
+model contracts {
+  id                    String          @id @default(uuid()) @db.Uuid
+  vendor_id             String          @db.Uuid
+  estimate_id           String?         @db.Uuid
+  signed_date           DateTime?       @db.Date
+  total_contract_amount BigInt
+  deliverables_summary  String?
+  cancellation_terms    String?
+  insurance_required    Boolean         @default(false)
+  attachment_file_path  String?
+  status                contract_status @default(draft)
+  notes                 String?
+  created_at            DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime        @default(now()) @db.Timestamptz(6)
+
+  vendor   vendors    @relation(fields: [vendor_id], references: [id])
+  estimate estimates? @relation(fields: [estimate_id], references: [id])
+  payments payments[]
+
+  @@index([vendor_id])
+  @@index([status])
+}
+
+model payments {
+  id             String          @id @default(uuid()) @db.Uuid
+  contract_id    String?         @db.Uuid
+  description    String
+  amount         BigInt
+  due_date       DateTime        @db.Date
+  paid_date      DateTime?       @db.Date
+  payer_id       String          @db.Uuid
+  payment_method payment_method?
+  receipt_id     String?         @db.Uuid
+  notes          String?
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime        @default(now()) @db.Timestamptz(6)
+
+  contract    contracts?    @relation(fields: [contract_id], references: [id])
+  payer       payers        @relation(fields: [payer_id], references: [id])
+  receipt     receipts?     @relation("payment_receipt", fields: [receipt_id], references: [id])
+  matched_receipts receipts[] @relation("receipt_to_payment")
+  email_items email_items[]
+
+  @@index([due_date])
+  @@index([contract_id])
+  @@index([payer_id])
+}
+
+model tasks {
+  id              String        @id @default(uuid()) @db.Uuid
+  title           String
+  description     String?
+  category        String?
+  event_id        String?       @db.Uuid
+  owner           String?
+  status          task_status   @default(not_started)
+  priority        task_priority @default(medium)
+  due_date        DateTime?     @db.Date
+  timeframe_label String?
+  linked_vendor_id String?      @db.Uuid
+  source          String        @default("template")
+  notes           String?
+  completed_at    DateTime?     @db.Timestamptz(6)
+  created_at      DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime      @default(now()) @db.Timestamptz(6)
+
+  event         events?  @relation(fields: [event_id], references: [id])
+  linked_vendor vendors? @relation(fields: [linked_vendor_id], references: [id])
+
+  upstream_deps   task_dependencies[] @relation("downstream")
+  downstream_deps task_dependencies[] @relation("upstream")
+
+  @@index([status])
+  @@index([due_date])
+  @@index([event_id])
+}
+
+model task_dependencies {
+  id                 String   @id @default(uuid()) @db.Uuid
+  upstream_task_id   String   @db.Uuid
+  downstream_task_id String   @db.Uuid
+  dependency_type    String   @default("hard_blocks")
+  notes              String?
+  source             String   @default("manual")
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+
+  upstream   tasks @relation("upstream", fields: [upstream_task_id], references: [id], onDelete: Cascade)
+  downstream tasks @relation("downstream", fields: [downstream_task_id], references: [id], onDelete: Cascade)
+
+  @@unique([upstream_task_id, downstream_task_id])
+  @@index([upstream_task_id])
+  @@index([downstream_task_id])
+}
+
+model email_items {
+  id                   String              @id @default(uuid()) @db.Uuid
+  gmail_message_id     String              @unique
+  thread_id            String?
+  from_address         String
+  from_name            String?
+  subject              String?
+  received_at          DateTime            @db.Timestamptz(6)
+  body_snippet         String?
+  attachments_json     Json?
+  parsed_intent        email_intent        @default(unknown)
+  parsed_amount        BigInt?
+  parsed_vendor_guess  String?
+  suggested_vendor_id  String?             @db.Uuid
+  suggested_payment_id String?             @db.Uuid
+  review_status        email_review_status @default(pending_review)
+  direction            email_direction     @default(incoming)
+  processed_at         DateTime?           @db.Timestamptz(6)
+  notes                String?
+  created_at           DateTime            @default(now()) @db.Timestamptz(6)
+
+  suggested_vendor  vendors?    @relation(fields: [suggested_vendor_id], references: [id])
+  suggested_payment payments?   @relation(fields: [suggested_payment_id], references: [id])
+  estimates         estimates[]
+  receipts          receipts[]
+
+  @@index([review_status])
+  @@index([received_at(sort: Desc)])
+}
+
+model receipts {
+  id                   String   @id @default(uuid()) @db.Uuid
+  source               String
+  email_item_id        String?  @db.Uuid
+  vendor_id            String?  @db.Uuid
+  amount               BigInt
+  receipt_date         DateTime @db.Date
+  description          String?
+  attachment_file_path String?
+  matched_payment_id   String?  @db.Uuid
+  match_status         String   @default("unmatched")
+  notes                String?
+  created_at           DateTime @default(now()) @db.Timestamptz(6)
+
+  email_item      email_items? @relation(fields: [email_item_id], references: [id])
+  vendor          vendors?     @relation(fields: [vendor_id], references: [id])
+  matched_payment payments?    @relation("receipt_to_payment", fields: [matched_payment_id], references: [id])
+  payments_using  payments[]   @relation("payment_receipt")
+}
+
+// ============================================================
+// AUDIT
+// ============================================================
+
+model activity_log {
+  id           String   @id @default(uuid()) @db.Uuid
+  entity_type  String
+  entity_id    String   @db.Uuid
+  action       String
+  changed_by   String
+  diff_json    Json?
+  diff_summary String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([entity_type, entity_id])
+  @@index([created_at(sort: Desc)])
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+
+model allowed_users {
+  id       String   @id @default(uuid()) @db.Uuid
+  email    String   @unique
+  name     String?
+  role     String   @default("editor")
+  added_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model magic_link_tokens {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String
+  token_hash String   @unique
+  expires_at DateTime @db.Timestamptz(6)
+  used_at    DateTime? @db.Timestamptz(6)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([token_hash])
+}

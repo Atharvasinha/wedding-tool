@@ -1,0 +1,3233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Planning Tool — Visual Design Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=DM+Sans:opsz,wght@9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1A1614;
+    --ink-muted: #6B5F54;
+    --ink-subtle: #A0958A;
+    --cream: #F8F2E6;
+    --cream-warm: #F1E9D7;
+    --paper: #FFFEFB;
+    --border: #E5DBC6;
+    --border-strong: #C9BCA1;
+
+    --terracotta: #B8451E;
+    --terracotta-soft: #E8C9B5;
+    --sage: #6F8266;
+    --sage-soft: #C9D5BD;
+    --gold: #C9913A;
+    --gold-soft: #EAD3A0;
+    --rust: #9A3F23;
+    --teal: #3A6256;
+    --teal-soft: #BBD0C7;
+    --slate: #4A5560;
+    --slate-soft: #C8CFD6;
+
+    --shadow-sm: 0 1px 2px rgba(50, 38, 28, 0.04);
+    --shadow-md: 0 6px 20px rgba(50, 38, 28, 0.06);
+    --shadow-lg: 0 16px 48px rgba(50, 38, 28, 0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.55;
+    font-size: 15px;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .display { font-family: 'Fraunces', serif; font-feature-settings: 'ss01'; letter-spacing: -0.01em; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum' 1; }
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  /* Document container */
+  .doc {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 80px 48px 120px;
+  }
+
+  /* Hero */
+  .hero {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 64px;
+    margin-bottom: 80px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 80px;
+    align-items: end;
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: 68px;
+    line-height: 0.95;
+    font-weight: 350;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    font-variation-settings: 'opsz' 144, 'SOFT' 50;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--terracotta);
+    font-weight: 350;
+  }
+  .hero-meta {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .hero-meta dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+  }
+  .hero-meta dt { color: var(--ink-subtle); text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; }
+  .hero-meta dd { color: var(--ink); font-weight: 500; }
+
+  /* Section */
+  .section { margin-bottom: 96px; }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--terracotta);
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 44px;
+    line-height: 1.05;
+    font-weight: 350;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    font-variation-settings: 'opsz' 144;
+  }
+  .section-title em { font-style: italic; color: var(--terracotta); }
+  .section-lede {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 720px;
+    margin-bottom: 48px;
+  }
+  .section-lede strong { color: var(--ink); font-weight: 500; }
+
+  /* Principles grid */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+  .principle {
+    border-top: 1px solid var(--border-strong);
+    padding-top: 16px;
+  }
+  .principle-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--terracotta);
+    margin-bottom: 8px;
+  }
+  .principle-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 400;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .principle-body {
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  /* Tokens grid */
+  .tokens-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .token-block { }
+  .token-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-subtle);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .swatch {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .swatch-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    margin-top: 6px;
+  }
+  .type-sample { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .type-sample:last-child { border-bottom: none; }
+  .type-sample-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-subtle);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Mockup frame */
+  .mockup-frame {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 32px;
+  }
+  .mockup-chrome {
+    background: var(--cream-warm);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .chrome-dots { display: flex; gap: 6px; }
+  .chrome-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--border-strong); }
+  .chrome-url {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    flex: 1;
+    max-width: 380px;
+    margin-left: 16px;
+  }
+
+  /* App shell */
+  .app {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 720px;
+    background: var(--paper);
+  }
+  .app-rail {
+    background: var(--cream);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .app-brand {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .app-brand em { font-style: italic; color: var(--terracotta); font-weight: 400; }
+  .app-brand-sub {
+    font-size: 11px;
+    color: var(--ink-subtle);
+    margin-bottom: 36px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .nav-section { margin-bottom: 24px; }
+  .nav-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-subtle);
+    margin-bottom: 8px;
+    padding: 0 10px;
+    font-weight: 500;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 2px;
+    cursor: pointer;
+  }
+  .nav-item.active {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-item .nav-icon {
+    width: 14px; height: 14px;
+    color: var(--ink-subtle);
+    flex-shrink: 0;
+  }
+  .nav-item.active .nav-icon { color: var(--terracotta); }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--terracotta-soft);
+    color: var(--terracotta);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .app-main { padding: 28px 36px; overflow: hidden; }
+
+  /* Top bar inside app */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .countdown { display: flex; align-items: baseline; gap: 12px; }
+  .countdown-num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variation-settings: 'opsz' 144;
+  }
+  .countdown-label {
+    font-size: 12px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .countdown-date {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--terracotta);
+    margin-left: 4px;
+  }
+  .topbar-right { display: flex; gap: 8px; align-items: center; }
+  .pill {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--sage);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* KPI strip */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+    padding: 20px 24px;
+    background: var(--cream);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .kpi-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-subtle);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .kpi-value {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    font-variation-settings: 'opsz' 144;
+  }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+  .kpi-sub.up { color: var(--rust); }
+  .kpi-sub.ok { color: var(--sage); }
+
+  /* Budget chart hero */
+  .budget-hero {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px 32px;
+    margin-bottom: 28px;
+  }
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .panel-title {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .panel-title em { font-style: italic; color: var(--terracotta); }
+  .panel-sub {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 2px; }
+
+  /* Budget bars */
+  .budget-bars { margin-top: 8px; }
+  .budget-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    align-items: center;
+    gap: 24px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .budget-row:hover { background: var(--cream); }
+  .budget-row.selected {
+    background: var(--cream-warm);
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 6px;
+    border-bottom: 1px solid transparent;
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .budget-label-sub {
+    font-size: 11px;
+    color: var(--ink-subtle);
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .bar-track {
+    height: 28px;
+    background: var(--cream-warm);
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+  }
+  .bar-paid { background: var(--teal); }
+  .bar-committed { background: var(--gold); }
+  .bar-empty { background: transparent; }
+  .bar-segment {
+    height: 100%;
+    transition: width 0.3s;
+  }
+  .bar-overflow {
+    background: repeating-linear-gradient(
+      45deg,
+      var(--rust),
+      var(--rust) 4px,
+      #B85838 4px,
+      #B85838 8px
+    );
+  }
+  .bar-numbers {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .bar-numbers .of { color: var(--ink-subtle); font-size: 11px; }
+
+  /* Section split */
+  .split {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 20px;
+  }
+
+  .panel {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+
+  /* Upcoming list */
+  .upcoming-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .upcoming-item:last-child { border-bottom: none; }
+  .when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-top: 2px;
+  }
+  .when.imminent { color: var(--rust); font-weight: 500; }
+  .what { font-size: 14px; color: var(--ink); }
+  .what-sub { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+  .who-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    background: var(--sage-soft);
+    color: var(--teal);
+    white-space: nowrap;
+  }
+  .who-tag.fam { background: var(--gold-soft); color: var(--gold); }
+  .who-tag.celesia { background: var(--terracotta-soft); color: var(--terracotta); }
+  .who-tag.task { background: var(--slate-soft); color: var(--slate); }
+
+  /* Risk panel */
+  .risk-row {
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--rust);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  .risk-dot.amber { background: var(--gold); }
+  .risk-text { font-size: 13px; color: var(--ink); }
+  .risk-text-sub { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+
+  /* Annotations layout */
+  .with-notes {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 32px;
+    align-items: start;
+  }
+  .notes {
+    padding-top: 16px;
+  }
+  .note {
+    margin-bottom: 28px;
+    padding-left: 14px;
+    border-left: 2px solid var(--terracotta);
+  }
+  .note-marker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--terracotta);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .note-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .note-body {
+    font-size: 13px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  /* Vendor table */
+  .vendor-pipeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    background: var(--cream);
+    padding: 16px;
+    border-radius: 10px;
+    margin-top: 4px;
+  }
+  .pipeline-col { }
+  .pipeline-head {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-subtle);
+    margin-bottom: 12px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+  }
+  .pipeline-count {
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 0 7px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink);
+    font-size: 10px;
+  }
+  .vendor-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .vendor-card-name { font-weight: 500; color: var(--ink); margin-bottom: 4px; font-size: 13px; }
+  .vendor-card-cat {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-subtle);
+    margin-bottom: 6px;
+  }
+  .vendor-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .vendor-card-amount { color: var(--ink); }
+  .vendor-card-stale { color: var(--gold); }
+  .vendor-card-payment {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+    font-size: 11px;
+    color: var(--ink-muted);
+  }
+  .vendor-card-payment.due { color: var(--rust); }
+
+  /* Tasks board */
+  .tasks-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .task-col-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    padding: 0 4px;
+  }
+  .task-col-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .task-col-name.behind { color: var(--rust); font-style: italic; }
+  .task-col-name.now { color: var(--gold); font-style: italic; }
+  .task-col-name.upcoming { color: var(--sage); font-style: italic; }
+  .task-col-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-subtle);
+  }
+  .task-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .task-card.behind { border-left: 3px solid var(--rust); }
+  .task-card.now { border-left: 3px solid var(--gold); }
+  .task-card.upcoming { border-left: 3px solid var(--sage); }
+  .task-card-title { font-size: 14px; color: var(--ink); margin-bottom: 6px; line-height: 1.35; }
+  .task-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--ink-muted); }
+  .task-owner-chip {
+    background: var(--cream-warm);
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-size: 10px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .task-deps {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .task-deps.blocked { color: var(--rust); }
+  .task-deps-icon { width: 11px; height: 11px; opacity: 0.7; }
+
+  /* Drill-down detail */
+  .drilldown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  .drilldown-table thead th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-subtle);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-strong);
+    font-weight: 500;
+  }
+  .drilldown-table thead th.right { text-align: right; }
+  .drilldown-table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: top;
+  }
+  .drilldown-table tbody td.right { text-align: right; font-family: 'JetBrains Mono', monospace; }
+  .drilldown-table tbody tr:hover { background: var(--cream); }
+  .status-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .status-chip.paid { background: var(--teal-soft); color: var(--teal); }
+  .status-chip.due { background: var(--gold-soft); color: var(--gold); }
+  .status-chip.overdue { background: var(--terracotta-soft); color: var(--rust); font-weight: 600; }
+  .status-chip.scheduled { background: var(--cream-warm); color: var(--ink-muted); }
+  .status-chip.signed { background: var(--sage-soft); color: var(--teal); }
+
+  /* Inbox */
+  .inbox-list { background: var(--paper); border-radius: 10px; }
+  .inbox-row {
+    display: grid;
+    grid-template-columns: 24px 1fr 100px 80px;
+    gap: 14px;
+    align-items: start;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .inbox-row:hover { background: var(--cream); }
+  .inbox-row.unread { background: rgba(184, 69, 30, 0.025); }
+  .inbox-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 7px;
+    background: var(--terracotta);
+  }
+  .inbox-status.processed { background: transparent; border: 1px solid var(--border-strong); }
+  .inbox-from { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .inbox-subject { font-size: 12px; color: var(--ink-muted); margin-bottom: 6px; }
+  .inbox-suggest {
+    font-size: 11px;
+    color: var(--ink);
+    background: var(--cream-warm);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border-left: 2px solid var(--terracotta);
+    line-height: 1.45;
+  }
+  .inbox-intent {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-subtle);
+    text-align: right;
+    padding-top: 2px;
+  }
+  .inbox-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    text-align: right;
+    padding-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .inbox-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+  }
+  .btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--terracotta); color: var(--paper); border-color: var(--terracotta); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--ink-muted); }
+
+  /* Architecture sketch */
+  .arch {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 24px;
+  }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--ink-muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Open questions */
+  .questions {
+    background: var(--cream-warm);
+    border-radius: 12px;
+    padding: 32px 36px;
+  }
+  .question {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-strong);
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .question:last-child { border-bottom: none; }
+  .question-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--terracotta);
+    font-weight: 600;
+    padding-top: 2px;
+  }
+  .question-text {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .question-text em {
+    color: var(--ink-muted);
+    font-style: normal;
+    font-size: 13px;
+    display: block;
+    margin-top: 3px;
+  }
+
+  /* Filter pills inside mockups */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-pill {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 14px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .filter-pill.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* Section nav */
+  .toc {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 64px;
+  }
+  .toc-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-subtle);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 24px;
+    list-style: none;
+  }
+  .toc-list a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .toc-list a:hover { border-bottom-color: var(--terracotta); }
+  .toc-list .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--terracotta);
+    width: 24px;
+    padding-top: 3px;
+  }
+
+  /* Smaller helpers */
+  .pill-ghost {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 10px;
+    border: 1px solid var(--border-strong);
+    color: var(--ink-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Editable number input (budget editor) */
+  .num-input {
+    border: 1px solid transparent;
+    background: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    text-align: right;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: 100px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .num-input:hover { border-color: var(--border); }
+  .num-input:focus {
+    outline: none;
+    border-color: var(--terracotta);
+    background: var(--cream);
+  }
+  .num-input.edited {
+    border-color: var(--gold);
+    background: rgba(201, 145, 58, 0.06);
+  }
+
+  /* Payer picker — clickable chip + dropdown */
+  .payer-picker {
+    position: relative;
+    display: inline-block;
+  }
+  .payer-chip {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: filter 0.12s;
+  }
+  .payer-chip:hover { filter: brightness(0.92); }
+  .payer-chip .caret {
+    width: 8px; height: 8px;
+    opacity: 0.6;
+  }
+  .payer-popover {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: var(--paper);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    box-shadow: 0 8px 28px rgba(50, 38, 28, 0.14);
+    padding: 6px;
+    min-width: 200px;
+    z-index: 10;
+  }
+  .payer-popover-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-subtle);
+    padding: 6px 8px 4px;
+    font-weight: 500;
+  }
+  .payer-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .payer-option:hover { background: var(--cream); }
+  .payer-option.selected { background: var(--cream-warm); font-weight: 500; }
+  .payer-option .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .payer-option .check {
+    margin-left: auto;
+    color: var(--terracotta);
+    font-size: 11px;
+  }
+
+  /* Architecture option cards */
+  .arch-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 32px;
+  }
+  .arch-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 22px;
+    position: relative;
+  }
+  .arch-card.recommended {
+    border: 2px solid var(--terracotta);
+    background: linear-gradient(180deg, rgba(184, 69, 30, 0.04), var(--paper) 80%);
+  }
+  .arch-recommend-tag {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: var(--terracotta);
+    color: var(--paper);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .arch-card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-subtle);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .arch-card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .arch-card-diagram {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+  .arch-pro, .arch-con {
+    font-size: 12px;
+    margin-bottom: 6px;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .arch-pro::before { content: "+"; position: absolute; left: 4px; color: var(--sage); font-weight: 600; }
+  .arch-con::before { content: "−"; position: absolute; left: 4px; color: var(--rust); font-weight: 600; }
+  .arch-pro { color: var(--ink); }
+  .arch-con { color: var(--ink-muted); }
+
+  /* Implementation note callouts */
+  .impl-note {
+    background: var(--cream-warm);
+    border-left: 3px solid var(--terracotta);
+    padding: 16px 20px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .impl-note strong { font-weight: 600; }
+  .impl-note .impl-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--terracotta);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Print fixes */
+  @media print {
+    body { background: white; }
+    .doc { padding: 24px; }
+    .mockup-frame { box-shadow: none; page-break-inside: avoid; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- ============= HERO ============= -->
+  <header class="hero">
+    <div>
+      <div class="hero-eyebrow">Visual Design Spec · v4 · Postgres locked · interactive payer picker</div>
+      <h1 class="hero-title">A planning tool for <em>one wedding,</em><br>two families, and a December date.</h1>
+    </div>
+    <div class="hero-meta">
+      <dl>
+        <dt>Couple</dt><dd>Atharva &amp; Celesia</dd>
+        <dt>Date</dt><dd>December 11, 2027</dd>
+        <dt>Venue</dt><dd>Camp Lucy (working)</dd>
+        <dt>Budget</dt><dd>$142,682 (mid-Dec scenario)</dd>
+        <dt>Guests</dt><dd>~125 invited · ~138 expected</dd>
+        <dt>Built with</dt><dd>Claude Code</dd>
+      </dl>
+    </div>
+  </header>
+
+  <!-- ============= TOC ============= -->
+  <nav class="toc">
+    <div class="toc-label">In this document</div>
+    <ul class="toc-list">
+      <li><a href="#principles"><span class="num">01</span> Design principles</a></li>
+      <li><a href="#system"><span class="num">02</span> Visual system</a></li>
+      <li><a href="#dashboard"><span class="num">03</span> Dashboard (the hero screen)</a></li>
+      <li><a href="#drilldown"><span class="num">04</span> Category drill-down</a></li>
+      <li><a href="#budget-editor"><span class="num">05</span> Budget editor</a></li>
+      <li><a href="#vendors"><span class="num">06</span> Vendors &amp; contracts</a></li>
+      <li><a href="#tasks"><span class="num">07</span> Tasks</a></li>
+      <li><a href="#inbox"><span class="num">08</span> Inbox</a></li>
+      <li><a href="#data"><span class="num">09</span> Data architecture &amp; the spreadsheet shadow</a></li>
+      <li><a href="#decisions"><span class="num">10</span> Decisions</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============= PRINCIPLES ============= -->
+  <section class="section" id="principles">
+    <div class="section-num">01 · DESIGN PRINCIPLES</div>
+    <h2 class="section-title">Four <em>commitments</em> that shape every screen.</h2>
+    <p class="section-lede">
+      The previous spec tried to solve everything. This one solves the <strong>one question we ask most:</strong>
+      <em>where are we vs. budget, and what's coming?</em> Everything else is in service of that.
+    </p>
+
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num">01</div>
+        <div class="principle-title">One screen does the heavy lifting.</div>
+        <div class="principle-body">The Dashboard answers the daily questions. Other tabs are for editing, not for checking. If we open the app and immediately need to click somewhere, the design has failed.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">02</div>
+        <div class="principle-title">Charts on top, details below.</div>
+        <div class="principle-body">Every screen has a visual at the top and a clickable detail panel underneath. Click a budget bar, the panel below changes. Click a vendor, the panel changes. Predictable everywhere.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">03</div>
+        <div class="principle-title">Email proposes. We dispose.</div>
+        <div class="principle-body">Parsed receipts and estimates always require one click of confirmation. Nothing silently mutates the budget. Manual entry is always an option for cash, family checks, paper receipts.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">04</div>
+        <div class="principle-title">Payer is a first-class field.</div>
+        <div class="principle-body">Every dollar belongs to someone: us, Atharva's parents, Celesia's mom. Color-coded everywhere so we can scan the cash flow and know whose check is next.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= VISUAL SYSTEM ============= -->
+  <section class="section" id="system">
+    <div class="section-num">02 · VISUAL SYSTEM</div>
+    <h2 class="section-title">Editorial, not <em>SaaS dashboard.</em></h2>
+    <p class="section-lede">
+      This is something we will look at twice a day for 19 months. It should feel like a magazine we want to open, not a Jira board we have to. Warm cream surface, deep ink, terracotta accent that quietly nods to the cultural blend, restrained use of color elsewhere.
+    </p>
+
+    <div class="tokens-grid">
+      <div class="token-block">
+        <div class="token-label">Surface &amp; ink</div>
+        <div class="swatches">
+          <div><div class="swatch" style="background:#F8F2E6"></div><div class="swatch-name">cream</div></div>
+          <div><div class="swatch" style="background:#FFFEFB; border-color:#E5DBC6"></div><div class="swatch-name">paper</div></div>
+          <div><div class="swatch" style="background:#1A1614"></div><div class="swatch-name">ink</div></div>
+          <div><div class="swatch" style="background:#6B5F54"></div><div class="swatch-name">muted</div></div>
+          <div><div class="swatch" style="background:#E5DBC6"></div><div class="swatch-name">border</div></div>
+        </div>
+        <div class="token-label" style="margin-top: 28px;">Status &amp; accent</div>
+        <div class="swatches">
+          <div><div class="swatch" style="background:#B8451E"></div><div class="swatch-name">terracotta</div></div>
+          <div><div class="swatch" style="background:#3A6256"></div><div class="swatch-name">teal · paid</div></div>
+          <div><div class="swatch" style="background:#C9913A"></div><div class="swatch-name">gold · due</div></div>
+          <div><div class="swatch" style="background:#9A3F23"></div><div class="swatch-name">rust · late</div></div>
+          <div><div class="swatch" style="background:#6F8266"></div><div class="swatch-name">sage · ok</div></div>
+        </div>
+      </div>
+
+      <div class="token-block">
+        <div class="token-label">Typography</div>
+        <div class="type-sample">
+          <div class="type-sample-meta">Display · Fraunces 350 · variable opsz</div>
+          <div class="display" style="font-size: 38px; line-height: 1.05; letter-spacing: -0.02em;">December eleventh, <em style="color:var(--terracotta)">2027</em></div>
+        </div>
+        <div class="type-sample">
+          <div class="type-sample-meta">UI · DM Sans 500</div>
+          <div style="font-size: 16px; font-weight: 500;">Photographer · 50% deposit due Jan 15</div>
+        </div>
+        <div class="type-sample">
+          <div class="type-sample-meta">Numbers · JetBrains Mono · tabular</div>
+          <div class="mono tabular" style="font-size: 18px;">$142,682.10 / $9,816.00 paid</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SCREEN 1: DASHBOARD ============= -->
+  <section class="section" id="dashboard">
+    <div class="section-num">03 · SCREEN ONE</div>
+    <h2 class="section-title">The <em>Dashboard.</em> The whole tool, almost.</h2>
+    <p class="section-lede">
+      A budget chart that takes up the top half. Below it, two panels: what's coming in the next two weeks, and what's behind. This is the screen we open every time. Eighty percent of our questions get answered without leaving it.
+    </p>
+
+    <div class="with-notes">
+      <div>
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="chrome-url">app.atharvaceleesia.wedding · Dashboard</div>
+          </div>
+          <div class="app">
+            <!-- Left rail -->
+            <aside class="app-rail">
+              <div class="app-brand">A &amp; <em>C</em></div>
+              <div class="app-brand-sub">12.11.27</div>
+
+              <div class="nav-section">
+                <div class="nav-label">Plan</div>
+                <div class="nav-item active">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+                  Dashboard
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                  Vendors
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l4 4-4 4M9 11h4"/></svg>
+                  Tasks
+                  <span class="badge">3</span>
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 5 6-5M2 4v8h12V4"/></svg>
+                  Inbox
+                  <span class="badge">7</span>
+                </div>
+              </div>
+
+              <div class="nav-section">
+                <div class="nav-label">Configure</div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2"/><path d="M8 1v3M8 12v3M1 8h3M12 8h3"/></svg>
+                  Settings
+                </div>
+              </div>
+
+              <div style="margin-top: auto; padding-top: 24px; border-top: 1px solid var(--border); font-size: 11px; color: var(--ink-subtle);">
+                <div style="margin-bottom: 4px;">Synced 4 min ago</div>
+                <div class="mono" style="font-size: 10px;">gmail · 3 new</div>
+              </div>
+            </aside>
+
+            <!-- Main -->
+            <main class="app-main">
+              <div class="topbar">
+                <div class="countdown">
+                  <span class="countdown-num tabular">19</span>
+                  <span class="countdown-label">months · 8 days to</span>
+                  <span class="countdown-date">December 11, 2027</span>
+                </div>
+                <div class="topbar-right">
+                  <div class="pill">+ Quick add</div>
+                  <div class="avatar">A</div>
+                </div>
+              </div>
+
+              <!-- KPI strip -->
+              <div class="kpi-row">
+                <div>
+                  <div class="kpi-label">Budget</div>
+                  <div class="kpi-value tabular">$142,682</div>
+                  <div class="kpi-sub">total planned</div>
+                </div>
+                <div>
+                  <div class="kpi-label">Committed</div>
+                  <div class="kpi-value tabular" style="color:var(--gold)">$96,260</div>
+                  <div class="kpi-sub">67% of budget</div>
+                </div>
+                <div>
+                  <div class="kpi-label">Paid</div>
+                  <div class="kpi-value tabular" style="color:var(--teal)">$11,374</div>
+                  <div class="kpi-sub">8% of budget</div>
+                </div>
+                <div>
+                  <div class="kpi-label">Health</div>
+                  <div class="kpi-value" style="color:var(--sage); font-style: italic; font-size: 22px; padding-top: 4px;">On track</div>
+                  <div class="kpi-sub ok">2 items behind</div>
+                </div>
+              </div>
+
+              <!-- Budget hero chart -->
+              <div class="budget-hero">
+                <div class="panel-head">
+                  <div class="panel-title">Budget by <em>category</em></div>
+                  <div class="legend">
+                    <div class="legend-item"><div class="legend-swatch" style="background:var(--teal)"></div>Paid</div>
+                    <div class="legend-item"><div class="legend-swatch" style="background:var(--gold)"></div>Committed</div>
+                    <div class="legend-item"><div class="legend-swatch" style="background:var(--cream-warm); border:1px solid var(--border)"></div>Planned</div>
+                  </div>
+                </div>
+                <div class="panel-sub">Click any row to drill into payments, contracts, and tasks for that category.</div>
+
+                <div class="budget-bars">
+                  <!-- Food and Beverage -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Food &amp; Beverage</div>
+                      <div class="budget-label-sub">5 events · all-inclusive thru venue</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 100%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      $64,625 <span class="of">committed</span>
+                      <div style="font-size:11px;color:var(--ink-subtle)">of $64,625 planned</div>
+                    </div>
+                  </div>
+
+                  <!-- Venue Fees -->
+                  <div class="budget-row selected">
+                    <div>
+                      <div class="budget-label">Venue Fees</div>
+                      <div class="budget-label-sub">Camp Lucy · Fri+Sat</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 40%"></div>
+                      <div class="bar-segment bar-committed" style="width: 60%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      $11,374 <span class="of">/ $28,435</span>
+                      <div style="font-size:11px;color:var(--teal)">40% deposit paid</div>
+                    </div>
+                  </div>
+
+                  <!-- Guest Travel -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Guest Travel &amp; Rooms</div>
+                      <div class="budget-label-sub">20 rooms subsidized · 2 nights</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 0%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      <span class="of">no contracts yet</span>
+                      <div style="font-size:11px;color:var(--ink-subtle)">$23,816 planned</div>
+                    </div>
+                  </div>
+
+                  <!-- Attire -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Attire</div>
+                      <div class="budget-label-sub">Sherwani · lehenga · Western</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 12%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      $1,200 <span class="of">/ $10,000</span>
+                      <div style="font-size:11px;color:var(--ink-subtle)">sherwani deposit only</div>
+                    </div>
+                  </div>
+
+                  <!-- Misc Rentals -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Misc Rentals</div>
+                      <div class="budget-label-sub">Mandap · uplighting · lounges</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 0%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      <span class="of">scoping</span>
+                      <div style="font-size:11px;color:var(--ink-subtle)">$9,306 planned</div>
+                    </div>
+                  </div>
+
+                  <!-- Photography -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Photography</div>
+                      <div class="budget-label-sub">3 estimates pending review</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 0%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      <span class="of">comparing</span>
+                      <div style="font-size:11px;color:var(--ink-subtle)">$3,000 placeholder</div>
+                    </div>
+                  </div>
+
+                  <!-- Planner -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Planner / Coordination</div>
+                      <div class="budget-label-sub">Month-of coordinator only</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 100%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      $2,000 <span class="of">committed</span>
+                      <div style="font-size:11px;color:var(--gold)">deposit due in 7 days</div>
+                    </div>
+                  </div>
+
+                  <!-- Invites -->
+                  <div class="budget-row">
+                    <div>
+                      <div class="budget-label">Invites &amp; Favors</div>
+                      <div class="budget-label-sub">Multi-event suite · digital RSVP</div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-segment bar-paid" style="width: 0%"></div>
+                      <div class="bar-segment bar-committed" style="width: 0%"></div>
+                    </div>
+                    <div class="bar-numbers">
+                      <span class="of">not started</span>
+                      <div style="font-size:11px;color:var(--ink-subtle)">$1,500 planned</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lower split -->
+              <div class="split">
+                <div class="panel">
+                  <div class="panel-head">
+                    <div class="panel-title">Next <em>fourteen</em> days</div>
+                  </div>
+                  <div class="panel-sub">Payments &amp; tasks across both calendars</div>
+
+                  <div class="upcoming-item">
+                    <div class="when imminent">Today</div>
+                    <div>
+                      <div class="what">Confirm priest's required ritual items</div>
+                      <div class="what-sub">Vedic ceremony · written list</div>
+                    </div>
+                    <div class="who-tag task">Mona / Atharva</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when imminent">May 7</div>
+                    <div>
+                      <div class="what">Planner deposit · $1,000</div>
+                      <div class="what-sub">Stedman Hall coordinator · 50% on signing</div>
+                    </div>
+                    <div class="who-tag">Us</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when">May 9</div>
+                    <div>
+                      <div class="what">Send Sangeet caterer the menu shortlist</div>
+                      <div class="what-sub">Reply needed before tasting on May 18</div>
+                    </div>
+                    <div class="who-tag task">Atharva</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when">May 12</div>
+                    <div>
+                      <div class="what">Photography decision deadline</div>
+                      <div class="what-sub">3 estimates in · all expire May 15</div>
+                    </div>
+                    <div class="who-tag task">Celesia</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when">May 13</div>
+                    <div>
+                      <div class="what">Catering · Sangeet deposit · $4,200</div>
+                      <div class="what-sub">Curry Up Now · 25% on contract</div>
+                    </div>
+                    <div class="who-tag celesia">Celesia's mom</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when">May 15</div>
+                    <div>
+                      <div class="what">Venue · Q3 milestone · $11,374</div>
+                      <div class="what-sub">Camp Lucy · 40% per signed contract</div>
+                    </div>
+                    <div class="who-tag fam">Atharva's parents</div>
+                  </div>
+                </div>
+
+                <div class="panel">
+                  <div class="panel-head">
+                    <div class="panel-title">Behind &amp; <em>at risk</em></div>
+                  </div>
+                  <div class="panel-sub">Things to fix this week</div>
+
+                  <div class="risk-row">
+                    <div class="risk-dot"></div>
+                    <div>
+                      <div class="risk-text">Save-the-date design unstarted</div>
+                      <div class="risk-text-sub">Was due Apr 28 · blocks invitations chain · 4 wk printer lead time</div>
+                    </div>
+                  </div>
+                  <div class="risk-row">
+                    <div class="risk-dot"></div>
+                    <div>
+                      <div class="risk-text">Hotel room block cutoff date not set</div>
+                      <div class="risk-text-sub">Blocks website launch · waiting on Camp Lucy reply</div>
+                    </div>
+                  </div>
+                  <div class="risk-row">
+                    <div class="risk-dot amber"></div>
+                    <div>
+                      <div class="risk-text">Mandap florist scope unclear</div>
+                      <div class="risk-text-sub">Florist asked Mar 22 · no answer yet · risks lead time</div>
+                    </div>
+                  </div>
+                  <div class="risk-row">
+                    <div class="risk-dot amber"></div>
+                    <div>
+                      <div class="risk-text">5 photography estimates expire next week</div>
+                      <div class="risk-text-sub">May 15 · narrow to 1 before deadline</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annotations -->
+      <div class="notes">
+        <div class="note">
+          <div class="note-marker">A · COUNTDOWN</div>
+          <div class="note-title">Persistent, never hidden.</div>
+          <div class="note-body">The wedding date and "X months Y days" lives on every screen. It anchors urgency without being shouty.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">B · KPI STRIP</div>
+          <div class="note-title">Four numbers. No more.</div>
+          <div class="note-body">Planned · Committed · Paid · Health. Health is qualitative ("On track" / "Slipping" / "At risk") so we feel the state, not just count it.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">C · BUDGET BARS</div>
+          <div class="note-title">The hero. Click any row.</div>
+          <div class="note-body">Stacked horizontal bars: paid (teal) over committed (gold) over planned (cream). Sorted by largest planned first. Clicking a row opens the drill-down (next screen).</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">D · LOWER SPLIT</div>
+          <div class="note-title">Look ahead, look behind.</div>
+          <div class="note-body">"Next 14 days" combines payments and tasks in one chronological list. "Behind &amp; at risk" stays small but pointed: rust dots are blockers, gold dots are slipping.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">E · PAYER COLOR</div>
+          <div class="note-title">Always visible.</div>
+          <div class="note-body">Every payment line shows who's paying with a small chip. Atharva's parents · Celesia's mom · Us. We can scan the cash flow and know whose check is next.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SCREEN 2: DRILL-DOWN ============= -->
+  <section class="section" id="drilldown">
+    <div class="section-num">04 · SCREEN TWO</div>
+    <h2 class="section-title">Click a bar. <em>See the receipts.</em></h2>
+    <p class="section-lede">
+      The same Dashboard, but the bottom panels reshape into a category-specific view. Every contract, every payment, every related task and email, in one place. The drill-down is not a separate page; it's the same page reorganized.
+    </p>
+
+    <div class="with-notes">
+      <div>
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="chrome-url">app.atharvaceleesia.wedding · Dashboard › Venue Fees</div>
+          </div>
+          <div class="app">
+            <aside class="app-rail">
+              <div class="app-brand">A &amp; <em>C</em></div>
+              <div class="app-brand-sub">12.11.27</div>
+              <div class="nav-section">
+                <div class="nav-label">Plan</div>
+                <div class="nav-item active">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+                  Dashboard
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                  Vendors
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l4 4-4 4M9 11h4"/></svg>
+                  Tasks <span class="badge">3</span>
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 5 6-5M2 4v8h12V4"/></svg>
+                  Inbox <span class="badge">7</span>
+                </div>
+              </div>
+            </aside>
+
+            <main class="app-main">
+              <!-- Compact bar chart at top, category highlighted -->
+              <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-subtle);">Viewing</div>
+                <div class="display" style="font-size: 28px; font-weight: 400;">Venue Fees</div>
+                <div class="pill-ghost">Camp Lucy</div>
+                <div style="margin-left: auto; font-size: 12px; color: var(--ink-muted);">← Back to all categories</div>
+              </div>
+
+              <!-- Compact stacked bar showing where this category sits -->
+              <div class="budget-hero" style="padding: 18px 24px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 280px; gap: 32px; align-items: center;">
+                  <div>
+                    <div class="bar-track" style="height: 36px;">
+                      <div class="bar-segment bar-paid" style="width: 40%; display: flex; align-items: center; padding-left: 10px; color: var(--paper); font-family: 'JetBrains Mono'; font-size: 12px;">$11,374</div>
+                      <div class="bar-segment bar-committed" style="width: 60%; display: flex; align-items: center; padding-left: 10px; color: var(--ink); font-family: 'JetBrains Mono'; font-size: 12px;">$17,061 remaining on contract</div>
+                    </div>
+                    <div style="display: flex; gap: 24px; margin-top: 12px; font-size: 11px; color: var(--ink-muted);">
+                      <div><span class="legend-swatch" style="display:inline-block; background:var(--teal); margin-right:6px;"></span>Paid</div>
+                      <div><span class="legend-swatch" style="display:inline-block; background:var(--gold); margin-right:6px;"></span>Committed (unpaid)</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="display tabular" style="font-size: 30px;">$28,435</div>
+                    <div style="font-size: 12px; color: var(--ink-muted);">total contract · 100% of budget</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tabs within category -->
+              <div class="filter-row">
+                <div class="filter-pill active">Payments</div>
+                <div class="filter-pill">Contracts (1)</div>
+                <div class="filter-pill">Linked tasks (4)</div>
+                <div class="filter-pill">Email history (12)</div>
+                <div style="margin-left:auto;"><button class="btn">+ Add payment</button></div>
+              </div>
+
+              <div class="panel" style="padding: 4px 24px 16px;">
+                <table class="drilldown-table">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Due / Paid</th>
+                      <th>Payer</th>
+                      <th>Method</th>
+                      <th class="right">Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div style="font-weight: 500;">Initial deposit · 40%</div>
+                        <div style="font-size: 11px; color: var(--ink-muted);">Receipt attached · #CL-2026-0291</div>
+                      </td>
+                      <td>
+                        <div>Apr 18, 2026</div>
+                        <div style="font-size: 11px; color: var(--teal);">paid Apr 18</div>
+                      </td>
+                      <td><span class="who-tag fam">Atharva's parents</span></td>
+                      <td>Wire</td>
+                      <td class="right">$11,374.00</td>
+                      <td><span class="status-chip paid">Paid</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div style="font-weight: 500;">Mid-point milestone · 30%</div>
+                        <div style="font-size: 11px; color: var(--ink-muted);">Per contract §4.b</div>
+                      </td>
+                      <td>
+                        <div>May 15, 2026</div>
+                        <div style="font-size: 11px; color: var(--gold);">in 12 days</div>
+                      </td>
+                      <td><span class="who-tag fam">Atharva's parents</span></td>
+                      <td>Wire</td>
+                      <td class="right">$8,530.50</td>
+                      <td><span class="status-chip due">Due soon</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div style="font-weight: 500;">Pre-event milestone · 20%</div>
+                        <div style="font-size: 11px; color: var(--ink-muted);">90 days prior to event</div>
+                      </td>
+                      <td>
+                        <div>Sep 12, 2027</div>
+                        <div style="font-size: 11px; color: var(--ink-subtle);">in ~16 months</div>
+                      </td>
+                      <td><span class="who-tag fam">Atharva's parents</span></td>
+                      <td>Card</td>
+                      <td class="right">$5,687.00</td>
+                      <td><span class="status-chip scheduled">Scheduled</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div style="font-weight: 500;">Final balance · 10%</div>
+                        <div style="font-size: 11px; color: var(--ink-muted);">14 days prior</div>
+                      </td>
+                      <td>
+                        <div>Nov 27, 2027</div>
+                        <div style="font-size: 11px; color: var(--ink-subtle);">in ~18 months</div>
+                      </td>
+                      <td><span class="who-tag">Us</span></td>
+                      <td>Card</td>
+                      <td class="right">$2,843.50</td>
+                      <td><span class="status-chip scheduled">Scheduled</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                <div class="panel">
+                  <div class="panel-head">
+                    <div class="panel-title" style="font-size: 18px;">Cash flow · this category</div>
+                  </div>
+                  <!-- Mini cashflow chart -->
+                  <svg viewBox="0 0 360 120" style="width:100%; height: 120px; margin-top: 12px;">
+                    <line x1="0" y1="100" x2="360" y2="100" stroke="#E5DBC6"/>
+                    <text x="0" y="115" font-family="JetBrains Mono" font-size="9" fill="#A0958A">May 26</text>
+                    <text x="170" y="115" font-family="JetBrains Mono" font-size="9" fill="#A0958A" text-anchor="middle">Sep 27</text>
+                    <text x="360" y="115" font-family="JetBrains Mono" font-size="9" fill="#A0958A" text-anchor="end">Nov 27</text>
+
+                    <!-- already paid -->
+                    <rect x="0" y="35" width="14" height="65" fill="#3A6256"/>
+                    <text x="7" y="30" font-family="JetBrains Mono" font-size="9" fill="#3A6256" text-anchor="middle">$11.4k</text>
+
+                    <!-- May 15 -->
+                    <rect x="22" y="50" width="14" height="50" fill="#C9913A"/>
+                    <text x="29" y="45" font-family="JetBrains Mono" font-size="9" fill="#C9913A" text-anchor="middle">$8.5k</text>
+
+                    <!-- Sep 12 2027 -->
+                    <rect x="245" y="65" width="14" height="35" fill="#E5DBC6"/>
+                    <text x="252" y="60" font-family="JetBrains Mono" font-size="9" fill="#A0958A" text-anchor="middle">$5.7k</text>
+
+                    <!-- Nov 27 2027 -->
+                    <rect x="335" y="80" width="14" height="20" fill="#E5DBC6"/>
+                    <text x="342" y="75" font-family="JetBrains Mono" font-size="9" fill="#A0958A" text-anchor="middle">$2.8k</text>
+                  </svg>
+                </div>
+                <div class="panel">
+                  <div class="panel-head">
+                    <div class="panel-title" style="font-size: 18px;">Linked tasks</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when">May 15</div>
+                    <div>
+                      <div class="what">Confirm seating capacity for Sangeet</div>
+                      <div class="what-sub">Required by Camp Lucy 7 days before milestone</div>
+                    </div>
+                    <div class="who-tag task">Celesia</div>
+                  </div>
+                  <div class="upcoming-item">
+                    <div class="when">Aug 21</div>
+                    <div>
+                      <div class="what">Walkthrough · venue + planner</div>
+                      <div class="what-sub">Triggers floorplan finalization</div>
+                    </div>
+                    <div class="who-tag task">Both</div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <div class="note-marker">A · BREADCRUMB</div>
+          <div class="note-title">Always one click home.</div>
+          <div class="note-body">"← Back to all categories" returns to the main dashboard chart. We're not lost in a hierarchy.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">B · COMPACT CHART</div>
+          <div class="note-title">The category bar, expanded.</div>
+          <div class="note-body">Same paid/committed split as the main chart, just bigger. Confirms which category we're inside.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">C · TABS</div>
+          <div class="note-title">Four cuts of the same data.</div>
+          <div class="note-body">Payments · Contracts · Linked tasks · Email history. Every category has all four; some are empty.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">D · PAYMENT TABLE</div>
+          <div class="note-title">The financial heart of the tool.</div>
+          <div class="note-body">Description · Due/Paid date · Payer · Method · Amount · Status. Sortable. Click any row to mark paid, attach receipt, reassign payer.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">E · MINI CHARTS</div>
+          <div class="note-title">Show, don't tell.</div>
+          <div class="note-body">A small cash-flow timeline for just this category. Helps visualize when payment pressure hits.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SCREEN: BUDGET EDITOR ============= -->
+  <section class="section" id="budget-editor">
+    <div class="section-num">05 · SCREEN THREE</div>
+    <h2 class="section-title">The <em>budget editor.</em> Locked, but living.</h2>
+    <p class="section-lede">
+      The total is set at <strong>$142,682</strong>, but we'll be moving money between categories for months — and reassigning who pays for what along the way. Type a new number into any category, watch the stacked bar reshape. Click any payer chip to reassign the default payer; the by-payer split below ripples. All inline. No save button.
+    </p>
+
+    <div class="with-notes">
+      <div>
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="chrome-url">app.atharvaceleesia.wedding · Budget editor</div>
+          </div>
+          <div class="app">
+            <aside class="app-rail">
+              <div class="app-brand">A &amp; <em>C</em></div>
+              <div class="app-brand-sub">12.11.27</div>
+              <div class="nav-section">
+                <div class="nav-label">Plan</div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+                  Dashboard
+                </div>
+                <div class="nav-item active">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12V6M6 12V3M10 12V8M14 12V5"/></svg>
+                  Budget editor
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                  Vendors
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l4 4-4 4M9 11h4"/></svg>
+                  Tasks <span class="badge">3</span>
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 5 6-5M2 4v8h12V4"/></svg>
+                  Inbox <span class="badge">7</span>
+                </div>
+              </div>
+            </aside>
+
+            <main class="app-main">
+              <div class="topbar">
+                <div>
+                  <div class="display" style="font-size: 28px;">Budget <em style="color:var(--terracotta)">editor</em></div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">
+                    Baseline locked Apr 12, 2026 · changes save instantly · revert any time
+                  </div>
+                </div>
+                <div class="topbar-right">
+                  <div class="pill">↻ Revert</div>
+                  <div class="pill">↗ Save scenario</div>
+                </div>
+              </div>
+
+              <!-- Total + variance panel -->
+              <div class="budget-hero">
+                <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 40px; align-items: end; margin-bottom: 24px;">
+                  <div>
+                    <div class="kpi-label">Working total</div>
+                    <div class="display tabular" style="font-size: 46px; line-height: 1; margin-top: 4px; font-weight: 350;">$148,076</div>
+                    <div style="font-size: 11px; color: var(--ink-subtle); margin-top: 4px;">edits to 2 categories pending</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11px; color: var(--ink-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;">Variance from locked baseline</div>
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                      <div class="display tabular" style="font-size: 22px; color: var(--rust); font-style: italic;">+$5,394</div>
+                      <div style="flex: 1; height: 5px; background: var(--cream-warm); border-radius: 3px; position: relative;">
+                        <!-- center tick -->
+                        <div style="position: absolute; left: 50%; top: -4px; width: 2px; height: 13px; background: var(--ink-muted);"></div>
+                        <!-- variance bar (right of center) -->
+                        <div style="position: absolute; left: 50%; top: 0; width: 18%; height: 100%; background: var(--rust); border-radius: 0 3px 3px 0;"></div>
+                        <!-- tolerance band markers -->
+                        <div style="position: absolute; left: 25%; top: -2px; width: 1px; height: 9px; background: var(--ink-subtle); opacity: 0.5;"></div>
+                        <div style="position: absolute; left: 75%; top: -2px; width: 1px; height: 9px; background: var(--ink-subtle); opacity: 0.5;"></div>
+                      </div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--ink-subtle); margin-top: 6px;">3.8% over · tolerance band ±5% ($135,548 – $149,816)</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="kpi-label">Per guest</div>
+                    <div class="display tabular" style="font-size: 26px; margin-top: 4px;">$1,185</div>
+                    <div style="font-size: 11px; color: var(--ink-subtle); margin-top: 2px;">@ 125 guests · +$44 vs baseline</div>
+                  </div>
+                </div>
+
+                <!-- The big stacked bar -->
+                <div>
+                  <div style="display: flex; height: 60px; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+                    <div style="width: 43.6%; background: #3A6256; display: flex; flex-direction: column; justify-content: center; padding: 0 14px; color: var(--paper);">
+                      <div style="font-size: 11px; font-weight: 500;">Food &amp; Beverage</div>
+                      <div class="mono" style="font-size: 12px; opacity: 0.85;">$64,625</div>
+                    </div>
+                    <div style="width: 19.2%; background: #B8451E; display: flex; flex-direction: column; justify-content: center; padding: 0 12px; color: var(--paper);">
+                      <div style="font-size: 11px; font-weight: 500;">Venue Fees</div>
+                      <div class="mono" style="font-size: 12px; opacity: 0.85;">$28,435</div>
+                    </div>
+                    <div style="width: 16.1%; background: #C9913A; display: flex; flex-direction: column; justify-content: center; padding: 0 12px; color: var(--paper);">
+                      <div style="font-size: 11px; font-weight: 500;">Guest Travel</div>
+                      <div class="mono" style="font-size: 12px; opacity: 0.85;">$23,816</div>
+                    </div>
+                    <div style="width: 7.8%; background: #4A5560; display: flex; flex-direction: column; justify-content: center; padding: 0 10px; color: var(--paper); border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold);">
+                      <div style="font-size: 10px; font-weight: 500;">Misc</div>
+                      <div class="mono" style="font-size: 11px; opacity: 0.9;">$11,500</div>
+                    </div>
+                    <div style="width: 6.8%; background: #9A3F23; display: flex; flex-direction: column; justify-content: center; padding: 0 9px; color: var(--paper);">
+                      <div style="font-size: 10px; font-weight: 500;">Attire</div>
+                      <div class="mono" style="font-size: 11px; opacity: 0.85;">$10k</div>
+                    </div>
+                    <div style="width: 4.2%; background: #6F8266; display: flex; flex-direction: column; justify-content: center; padding: 0 8px; color: var(--paper); border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold);">
+                      <div style="font-size: 10px; font-weight: 500;">Photo</div>
+                      <div class="mono" style="font-size: 10px; opacity: 0.85;">$6.2k</div>
+                    </div>
+                    <div style="width: 1.4%; background: #7A7846;"></div>
+                    <div style="width: 1.0%; background: #B07B2D;"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--ink-subtle); margin-top: 8px; font-family: 'JetBrains Mono', monospace;">
+                    <span>$0</span><span>$50k</span><span>$100k</span><span>$148k</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- The editable table -->
+              <div class="panel" style="padding: 4px 24px 16px;">
+                <table class="drilldown-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 24px;"></th>
+                      <th>Category</th>
+                      <th class="right">Planned</th>
+                      <th class="right">% of total</th>
+                      <th class="right">vs baseline</th>
+                      <th>Default payer</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#3A6256;border-radius:3px;"></div></td>
+                      <td><strong>Food &amp; Beverage</strong></td>
+                      <td class="right"><input class="num-input" value="64,625"/></td>
+                      <td class="right" style="color:var(--ink-muted);">43.6%</td>
+                      <td class="right" style="color:var(--ink-subtle); font-family: 'JetBrains Mono', monospace;">$0</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag celesia payer-chip">
+                            Celesia's mom
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--ink-muted);">all 5 events</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#B8451E;border-radius:3px;"></div></td>
+                      <td><strong>Venue Fees</strong></td>
+                      <td class="right"><input class="num-input" value="28,435"/></td>
+                      <td class="right" style="color:var(--ink-muted);">19.2%</td>
+                      <td class="right" style="color:var(--ink-subtle); font-family: 'JetBrains Mono', monospace;">$0</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag fam payer-chip">
+                            Atharva's parents
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--ink-muted);">Camp Lucy · Fri+Sat</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#C9913A;border-radius:3px;"></div></td>
+                      <td><strong>Guest Travel &amp; Rooms</strong></td>
+                      <td class="right"><input class="num-input" value="23,816"/></td>
+                      <td class="right" style="color:var(--ink-muted);">16.1%</td>
+                      <td class="right" style="color:var(--ink-subtle); font-family: 'JetBrains Mono', monospace;">$0</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag fam payer-chip">
+                            Atharva's parents
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--ink-muted);">20 rooms × 2 nights + flights</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#4A5560;border-radius:3px;"></div></td>
+                      <td><strong>Misc Rentals</strong></td>
+                      <td class="right"><input class="num-input edited" value="11,500"/></td>
+                      <td class="right" style="color:var(--ink-muted);">7.8%</td>
+                      <td class="right" style="color:var(--rust); font-family: 'JetBrains Mono', monospace; font-weight: 500;">+$2,194</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag fam payer-chip" style="outline: 2px solid var(--terracotta); outline-offset: 2px;">
+                            Atharva's parents
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                          <div class="payer-popover">
+                            <div class="payer-popover-label">Assign to</div>
+                            <div class="payer-option selected">
+                              <div class="dot" style="background:#C9913A"></div>
+                              <span>Atharva's parents</span>
+                              <span class="check">✓</span>
+                            </div>
+                            <div class="payer-option">
+                              <div class="dot" style="background:#B8451E"></div>
+                              <span>Celesia's mom</span>
+                            </div>
+                            <div class="payer-option">
+                              <div class="dot" style="background:#3A6256"></div>
+                              <span>Us · Atharva &amp; Celesia</span>
+                            </div>
+                            <div style="height: 1px; background: var(--border); margin: 4px 6px;"></div>
+                            <div class="payer-option" style="color: var(--ink-muted); font-size: 12px;">
+                              <span style="margin-left: 19px;">+ Add new payer</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--gold);">edited · added buffer</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#9A3F23;border-radius:3px;"></div></td>
+                      <td><strong>Attire</strong></td>
+                      <td class="right"><input class="num-input" value="10,000"/></td>
+                      <td class="right" style="color:var(--ink-muted);">6.8%</td>
+                      <td class="right" style="color:var(--ink-subtle); font-family: 'JetBrains Mono', monospace;">$0</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag payer-chip">
+                            Us
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--ink-muted);">sherwani · lehenga · Western</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#6F8266;border-radius:3px;"></div></td>
+                      <td><strong>Photography</strong></td>
+                      <td class="right"><input class="num-input edited" value="6,200"/></td>
+                      <td class="right" style="color:var(--ink-muted);">4.2%</td>
+                      <td class="right" style="color:var(--rust); font-family: 'JetBrains Mono', monospace; font-weight: 500;">+$3,200</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag payer-chip">
+                            Us
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--gold);">edited · Chen &amp; Co quote</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#7A7846;border-radius:3px;"></div></td>
+                      <td><strong>Planner / Coordination</strong></td>
+                      <td class="right"><input class="num-input" value="2,000"/></td>
+                      <td class="right" style="color:var(--ink-muted);">1.4%</td>
+                      <td class="right" style="color:var(--ink-subtle); font-family: 'JetBrains Mono', monospace;">$0</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag fam payer-chip">
+                            Atharva's parents
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--ink-muted);">month-of only</td>
+                    </tr>
+                    <tr>
+                      <td><div style="width:12px;height:12px;background:#B07B2D;border-radius:3px;"></div></td>
+                      <td><strong>Invites &amp; Favors</strong></td>
+                      <td class="right"><input class="num-input" value="1,500"/></td>
+                      <td class="right" style="color:var(--ink-muted);">1.0%</td>
+                      <td class="right" style="color:var(--ink-subtle); font-family: 'JetBrains Mono', monospace;">$0</td>
+                      <td>
+                        <div class="payer-picker">
+                          <span class="who-tag payer-chip">
+                            Us
+                            <svg class="caret" viewBox="0 0 8 8" fill="currentColor"><path d="M1 3l3 3 3-3z"/></svg>
+                          </span>
+                        </div>
+                      </td>
+                      <td style="font-size:11px; color:var(--ink-muted);">digital RSVP</td>
+                    </tr>
+                    <tr style="background: var(--cream-warm); font-weight: 500;">
+                      <td></td>
+                      <td><strong>Working total</strong></td>
+                      <td class="right" style="font-family: 'JetBrains Mono', monospace; font-size: 14px;"><strong>$148,076</strong></td>
+                      <td class="right" style="font-family: 'JetBrains Mono', monospace;"><strong>100%</strong></td>
+                      <td class="right" style="color: var(--rust); font-family: 'JetBrains Mono', monospace;"><strong>+$5,394</strong></td>
+                      <td></td>
+                      <td style="font-size: 11px; color: var(--rust);">3.8% over · within tolerance</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Below: live summary cards -->
+              <div class="split" style="margin-top: 16px;">
+                <div class="panel">
+                  <div class="panel-head">
+                    <div class="panel-title" style="font-size: 18px;">By <em>payer</em> · live</div>
+                  </div>
+                  <div class="panel-sub">Updates as you edit category amounts above</div>
+
+                  <div style="margin-top: 16px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                      <span style="color: var(--gold); font-weight: 500;">Atharva's parents</span>
+                      <span class="mono">$65,751 · 44%</span>
+                    </div>
+                    <div style="height: 14px; background: var(--cream-warm); border-radius: 3px; overflow: hidden;">
+                      <div style="width: 44%; height: 100%; background: var(--gold);"></div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--ink-subtle); margin-top: 4px;">Venue · Travel · Misc · Planner</div>
+                  </div>
+                  <div style="margin-top: 18px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                      <span style="color: var(--terracotta); font-weight: 500;">Celesia's mom</span>
+                      <span class="mono">$64,625 · 44%</span>
+                    </div>
+                    <div style="height: 14px; background: var(--cream-warm); border-radius: 3px; overflow: hidden;">
+                      <div style="width: 44%; height: 100%; background: var(--terracotta);"></div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--ink-subtle); margin-top: 4px;">Food &amp; Beverage (all 5 events)</div>
+                  </div>
+                  <div style="margin-top: 18px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                      <span style="color: var(--teal); font-weight: 500;">Us · Atharva &amp; Celesia</span>
+                      <span class="mono">$17,700 · 12%</span>
+                    </div>
+                    <div style="height: 14px; background: var(--cream-warm); border-radius: 3px; overflow: hidden;">
+                      <div style="width: 12%; height: 100%; background: var(--teal);"></div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--ink-subtle); margin-top: 4px;">Attire · Photography · Invites</div>
+                  </div>
+                  <div style="margin-top: 20px; padding-top: 14px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--ink-muted);">
+                    Edit a category's default payer to shift the split. Specific contracts can override the default.
+                  </div>
+                </div>
+
+                <div class="panel">
+                  <div class="panel-head">
+                    <div class="panel-title" style="font-size: 18px;">Scenarios</div>
+                  </div>
+                  <div class="panel-sub">Try alternatives without losing the baseline</div>
+
+                  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; border: 1px solid var(--border); border-radius: 6px;">
+                      <div>
+                        <div style="font-size: 13px; font-weight: 500;">Locked baseline</div>
+                        <div style="font-size: 11px; color: var(--ink-subtle);">Apr 12, 2026 · No Brunch / Mid Dec</div>
+                      </div>
+                      <div class="mono" style="font-size: 13px;">$142,682</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; border: 1px solid var(--terracotta); border-radius: 6px; background: rgba(184, 69, 30, 0.04);">
+                      <div>
+                        <div style="font-size: 13px; font-weight: 500; color: var(--terracotta);">Current working ▸</div>
+                        <div style="font-size: 11px; color: var(--rust);">+$5,394 over baseline</div>
+                      </div>
+                      <div class="mono" style="font-size: 13px;">$148,076</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; border: 1px solid var(--border); border-radius: 6px; opacity: 0.7;">
+                      <div>
+                        <div style="font-size: 13px;">"Drop videographer"</div>
+                        <div style="font-size: 11px; color: var(--ink-subtle);">saved Apr 28</div>
+                      </div>
+                      <div class="mono" style="font-size: 13px;">$140,082</div>
+                    </div>
+                    <div style="display: flex; justify-content: center; padding: 10px 14px; border: 1px dashed var(--border); border-radius: 6px; color: var(--ink-muted); font-size: 12px; cursor: pointer;">
+                      + Save current as scenario
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <div class="note-marker">A · ONE BAR</div>
+          <div class="note-title">The whole budget at a glance.</div>
+          <div class="note-body">Eight color-coded segments, sized to amount. F&amp;B is the giant; Invites is barely there. Edited segments get a gold outline so you can see what shifted.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">B · VARIANCE TRACK</div>
+          <div class="note-title">Drift, made visible.</div>
+          <div class="note-body">Center tick = locked baseline. Fills left (under) or right (over) as you adjust. Tolerance band ±5% — cross it and the bar turns red.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">C · EDIT INLINE</div>
+          <div class="note-title">No save button.</div>
+          <div class="note-body">Click any planned number. Type. Tab out. The bar, the variance, the payer split — all update. Edits sync to Postgres immediately, mirror to the Sheet within five minutes.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">D · EDITED ROWS</div>
+          <div class="note-title">What did I just change?</div>
+          <div class="note-body">Gold border on inputs that differ from baseline. Variance column shows +$ or –$. Revert button at the top resets everything in one click.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">E · PAYER PICKER</div>
+          <div class="note-title">Click any chip · reassign in two taps.</div>
+          <div class="note-body">Every payer chip is a button. Click it, pick a new payer from the three options (or add a new one). The category's default payer changes, future payments inherit the new default, and the panel below recalculates. Specific contracts can still override.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">F · LIVE PAYER PANEL</div>
+          <div class="note-title">Before you call your mom.</div>
+          <div class="note-body">Shift a category to a different payer, the totals shift instantly. See exactly what you're asking from each family before sending an email about it.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">G · SCENARIOS</div>
+          <div class="note-title">Try without committing.</div>
+          <div class="note-body">Save the current state as a named alternative ("Drop videographer", "Add Sunday brunch"). Switch between them. Only "Lock as baseline" overwrites the real budget.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SCREEN 3: VENDORS ============= -->
+  <section class="section" id="vendors">
+    <div class="section-num">06 · SCREEN FOUR</div>
+    <h2 class="section-title">Vendors &amp; <em>contracts.</em> The pipeline.</h2>
+    <p class="section-lede">
+      Every vendor is somewhere on a five-stage pipeline: researching, comparing estimates, negotiating, contracted, or delivered. The board view makes the funnel visible. Click any vendor to see their full file.
+    </p>
+
+    <div class="with-notes">
+      <div>
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="chrome-url">app.atharvaceleesia.wedding · Vendors</div>
+          </div>
+          <div class="app">
+            <aside class="app-rail">
+              <div class="app-brand">A &amp; <em>C</em></div>
+              <div class="app-brand-sub">12.11.27</div>
+              <div class="nav-section">
+                <div class="nav-label">Plan</div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+                  Dashboard
+                </div>
+                <div class="nav-item active">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                  Vendors
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l4 4-4 4M9 11h4"/></svg>
+                  Tasks <span class="badge">3</span>
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 5 6-5M2 4v8h12V4"/></svg>
+                  Inbox <span class="badge">7</span>
+                </div>
+              </div>
+            </aside>
+
+            <main class="app-main">
+              <div class="topbar">
+                <div>
+                  <div class="display" style="font-size: 28px;">Vendors &amp; <em style="color:var(--terracotta)">contracts</em></div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">14 vendors total · $96,260 committed across all stages</div>
+                </div>
+                <div class="topbar-right">
+                  <div class="pill">+ Add vendor</div>
+                </div>
+              </div>
+
+              <div class="filter-row">
+                <div class="filter-pill active">All categories</div>
+                <div class="filter-pill">Photo / Video</div>
+                <div class="filter-pill">F&amp;B</div>
+                <div class="filter-pill">Florals / Decor</div>
+                <div class="filter-pill">Music / DJ</div>
+                <div class="filter-pill">Attire</div>
+                <div style="margin-left:auto; font-size: 12px; color: var(--ink-muted);">View as · <strong style="color:var(--ink)">Board</strong> · List · Compare</div>
+              </div>
+
+              <div class="vendor-pipeline">
+                <!-- Researching -->
+                <div class="pipeline-col">
+                  <div class="pipeline-head">Researching <span class="pipeline-count">3</span></div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Florist</div>
+                    <div class="vendor-card-name">Bloom &amp; Co.</div>
+                    <div class="vendor-card-meta">
+                      <span style="color:var(--ink-subtle)">no estimate</span>
+                      <span class="vendor-card-stale">12d stale</span>
+                    </div>
+                  </div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Hair &amp; Makeup</div>
+                    <div class="vendor-card-name">Studio Atelier</div>
+                    <div class="vendor-card-meta">
+                      <span style="color:var(--ink-subtle)">website only</span>
+                      <span style="color:var(--ink-subtle)">3d</span>
+                    </div>
+                  </div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Transportation</div>
+                    <div class="vendor-card-name">Texas Shuttle Co.</div>
+                    <div class="vendor-card-meta">
+                      <span style="color:var(--ink-subtle)">contacted Apr 28</span>
+                      <span style="color:var(--ink-subtle)">5d</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Comparing -->
+                <div class="pipeline-col">
+                  <div class="pipeline-head">Comparing <span class="pipeline-count">2</span></div>
+                  <div class="vendor-card" style="border-color: var(--terracotta-soft);">
+                    <div class="vendor-card-cat">Photography</div>
+                    <div class="vendor-card-name">Chen &amp; Co Studio</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$6,200</span>
+                      <span class="vendor-card-stale">expires May 15</span>
+                    </div>
+                  </div>
+                  <div class="vendor-card" style="border-color: var(--terracotta-soft);">
+                    <div class="vendor-card-cat">Photography</div>
+                    <div class="vendor-card-name">Alexa Patel Photo</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$8,400</span>
+                      <span class="vendor-card-stale">expires May 15</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Negotiating -->
+                <div class="pipeline-col">
+                  <div class="pipeline-head">Negotiating <span class="pipeline-count">2</span></div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">DJ + Dhol</div>
+                    <div class="vendor-card-name">Sound Society</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$5,500</span>
+                      <span style="color:var(--ink-subtle)">v2 sent</span>
+                    </div>
+                  </div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Catering · Indian</div>
+                    <div class="vendor-card-name">Curry Up Now</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$18,400</span>
+                      <span style="color:var(--ink-subtle)">await reply</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contracted -->
+                <div class="pipeline-col">
+                  <div class="pipeline-head">Contracted <span class="pipeline-count">3</span></div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Venue</div>
+                    <div class="vendor-card-name">Camp Lucy</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$28,435</span>
+                      <span class="status-chip signed">Signed</span>
+                    </div>
+                    <div class="vendor-card-payment due">Next: $8,530 · May 15</div>
+                  </div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Planner</div>
+                    <div class="vendor-card-name">Stedman Hall Co.</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$2,000</span>
+                      <span class="status-chip signed">Signed</span>
+                    </div>
+                    <div class="vendor-card-payment due">Deposit · $1,000 · May 7</div>
+                  </div>
+                  <div class="vendor-card">
+                    <div class="vendor-card-cat">Attire · Sherwani</div>
+                    <div class="vendor-card-name">Manyavar Custom</div>
+                    <div class="vendor-card-meta">
+                      <span class="vendor-card-amount">$2,400</span>
+                      <span class="status-chip signed">Signed</span>
+                    </div>
+                    <div class="vendor-card-payment">Deposit paid · final on fitting</div>
+                  </div>
+                </div>
+
+                <!-- Delivered -->
+                <div class="pipeline-col">
+                  <div class="pipeline-head">Delivered <span class="pipeline-count">0</span></div>
+                  <div style="font-size: 11px; color: var(--ink-subtle); padding: 12px 8px; text-align: center; font-style: italic;">No vendors here yet.<br>Things land here post-event.</div>
+                </div>
+              </div>
+
+              <!-- Comparison drawer -->
+              <div class="panel" style="margin-top: 20px; border: 1px solid var(--terracotta-soft); background: rgba(184, 69, 30, 0.02);">
+                <div class="panel-head">
+                  <div class="panel-title" style="font-size: 18px;">Photography <em style="color:var(--terracotta)">comparison</em></div>
+                  <div class="pill-ghost">2 estimates · expires in 12 days</div>
+                </div>
+                <table class="drilldown-table" style="margin-top: 8px;">
+                  <thead>
+                    <tr>
+                      <th>Vendor</th>
+                      <th>Package</th>
+                      <th>Coverage</th>
+                      <th>Includes</th>
+                      <th>Excludes</th>
+                      <th class="right">Total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Chen &amp; Co Studio</strong><br><span style="font-size:11px; color:var(--ink-subtle)">via referral</span></td>
+                      <td>Multi-day</td>
+                      <td>Fri 6h · Sat 12h</td>
+                      <td>2 photogs · prints · gallery</td>
+                      <td style="color:var(--rust)">No video · no engagement shoot</td>
+                      <td class="right">$6,200</td>
+                      <td><button class="btn">Pick</button></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Alexa Patel Photo</strong><br><span style="font-size:11px; color:var(--ink-subtle)">South Asian specialist</span></td>
+                      <td>Multi-day premium</td>
+                      <td>Fri 8h · Sat 14h · Sun 4h</td>
+                      <td>2 photogs · 1 video · album · drone</td>
+                      <td style="color:var(--ink-muted)">+$800 for second shooter Sun</td>
+                      <td class="right">$8,400</td>
+                      <td><button class="btn btn-primary">Pick</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <div class="note-marker">A · PIPELINE</div>
+          <div class="note-title">Five columns. Drag to move.</div>
+          <div class="note-body">A vendor moves left-to-right as the relationship matures. Cards are minimal: category, name, amount, urgency tag.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">B · STALENESS</div>
+          <div class="note-title">Time without action shows.</div>
+          <div class="note-body">"12d stale" appears when nothing has happened to a vendor for over a week. Prompts us to follow up before things go cold.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">C · CONTRACTED CARDS</div>
+          <div class="note-title">Show the next payment.</div>
+          <div class="note-body">Once contracted, the card shows the next payment due. Red type if it's within a week. We never have to hunt for what's owed.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">D · COMPARISON DRAWER</div>
+          <div class="note-title">Side-by-side, not tabs.</div>
+          <div class="note-body">When 2+ estimates exist in the same category, a comparison drawer appears. Includes/Excludes are explicit so we don't get fooled by package math.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SCREEN 4: TASKS ============= -->
+  <section class="section" id="tasks">
+    <div class="section-num">07 · SCREEN FIVE</div>
+    <h2 class="section-title">Tasks. <em>Behind, now, upcoming.</em></h2>
+    <p class="section-lede">
+      Three columns. Not five, not seven. Behind = we missed it. Now = it's due in the next two weeks. Upcoming = it's coming in the next 30-60 days. Everything else is in the full list view, one click away.
+    </p>
+
+    <div class="with-notes">
+      <div>
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="chrome-url">app.atharvaceleesia.wedding · Tasks</div>
+          </div>
+          <div class="app">
+            <aside class="app-rail">
+              <div class="app-brand">A &amp; <em>C</em></div>
+              <div class="app-brand-sub">12.11.27</div>
+              <div class="nav-section">
+                <div class="nav-label">Plan</div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+                  Dashboard
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                  Vendors
+                </div>
+                <div class="nav-item active">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l4 4-4 4M9 11h4"/></svg>
+                  Tasks <span class="badge">3</span>
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 5 6-5M2 4v8h12V4"/></svg>
+                  Inbox <span class="badge">7</span>
+                </div>
+              </div>
+            </aside>
+
+            <main class="app-main">
+              <div class="topbar">
+                <div>
+                  <div class="display" style="font-size: 28px;">Tasks</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">152 total · 47 in flight · 89 upcoming · 16 done</div>
+                </div>
+                <div class="topbar-right">
+                  <div class="pill">+ Add task</div>
+                </div>
+              </div>
+
+              <div class="filter-row">
+                <div class="filter-pill active">Both of us</div>
+                <div class="filter-pill">Atharva</div>
+                <div class="filter-pill">Celesia</div>
+                <div class="filter-pill">Mona</div>
+                <div class="filter-pill">Bridal party</div>
+                <div style="margin-left:auto; font-size: 12px; color: var(--ink-muted);">View · <strong style="color:var(--ink)">Board</strong> · List · Calendar · Dependency graph</div>
+              </div>
+
+              <div class="tasks-board">
+                <div>
+                  <div class="task-col-head">
+                    <div class="task-col-name behind">Behind</div>
+                    <div class="task-col-count">3 items</div>
+                  </div>
+                  <div class="task-card behind">
+                    <div class="task-card-title">Save-the-date design unstarted</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--rust);">5 days late · was Apr 28</span>
+                      <span class="task-owner-chip">Celesia</span>
+                    </div>
+                    <div class="task-deps blocked">
+                      <svg class="task-deps-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+                      Blocks: invitations · website launch · 2 more
+                    </div>
+                  </div>
+                  <div class="task-card behind">
+                    <div class="task-card-title">Hotel room block cutoff date</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--rust);">2 days late</span>
+                      <span class="task-owner-chip">Atharva</span>
+                    </div>
+                    <div class="task-deps">
+                      Waiting on Camp Lucy reply
+                    </div>
+                  </div>
+                  <div class="task-card behind">
+                    <div class="task-card-title">Confirm priest's required ritual items</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--rust);">Was today</span>
+                      <span class="task-owner-chip">Mona/A</span>
+                    </div>
+                    <div class="task-deps">
+                      Tagged · Vedic ceremony · vendor-elevated
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="task-col-head">
+                    <div class="task-col-name now">Now (next 14d)</div>
+                    <div class="task-col-count">8 items</div>
+                  </div>
+                  <div class="task-card now">
+                    <div class="task-card-title">Pick a photographer</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--gold);">Due May 12</span>
+                      <span class="task-owner-chip">Both</span>
+                    </div>
+                    <div class="task-deps">2 estimates expire May 15</div>
+                  </div>
+                  <div class="task-card now">
+                    <div class="task-card-title">Send Sangeet caterer the menu shortlist</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--gold);">Due May 9</span>
+                      <span class="task-owner-chip">Atharva</span>
+                    </div>
+                    <div class="task-deps">Tasting May 18 depends on this</div>
+                  </div>
+                  <div class="task-card now">
+                    <div class="task-card-title">Set hotel room block cutoff (Camp Lucy)</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--gold);">Due May 11</span>
+                      <span class="task-owner-chip">Celesia</span>
+                    </div>
+                  </div>
+                  <div class="task-card now">
+                    <div class="task-card-title">Decide alcohol approach per event</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--gold);">Due May 14</span>
+                      <span class="task-owner-chip">Atharva</span>
+                    </div>
+                  </div>
+                  <div class="task-card now">
+                    <div class="task-card-title">Confirm shuttle quote</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--gold);">Due May 16</span>
+                      <span class="task-owner-chip">Atharva</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="task-col-head">
+                    <div class="task-col-name upcoming">Upcoming (15-60d)</div>
+                    <div class="task-col-count">12 items</div>
+                  </div>
+                  <div class="task-card upcoming">
+                    <div class="task-card-title">Book videographer (multi-day)</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--ink-muted);">Due May 24</span>
+                      <span class="task-owner-chip">Celesia</span>
+                    </div>
+                  </div>
+                  <div class="task-card upcoming">
+                    <div class="task-card-title">Send save-the-dates</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--ink-muted);">Due Jun 5</span>
+                      <span class="task-owner-chip">Both</span>
+                    </div>
+                    <div class="task-deps blocked">
+                      <svg class="task-deps-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="5"/><path d="M6 3v3l2 2"/></svg>
+                      Blocked by · Save-the-date design
+                    </div>
+                  </div>
+                  <div class="task-card upcoming">
+                    <div class="task-card-title">Mood boards per event</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--ink-muted);">Due Jun 10</span>
+                      <span class="task-owner-chip">Both</span>
+                    </div>
+                  </div>
+                  <div class="task-card upcoming">
+                    <div class="task-card-title">Book florist · multi-event scope</div>
+                    <div class="task-card-meta">
+                      <span style="color:var(--ink-muted);">Due Jun 14</span>
+                      <span class="task-owner-chip">C/M</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <div class="note-marker">A · THREE COLUMNS</div>
+          <div class="note-title">Time, not status.</div>
+          <div class="note-body">We organize by when, not what. Behind = past due. Now = next 14 days. Upcoming = 15-60 days. Beyond 60 days lives in the list view.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">B · DEPENDENCY HINT</div>
+          <div class="note-title">"Blocks" and "Blocked by".</div>
+          <div class="note-body">Each card surfaces its dependency relationships in plain English. Red text when something we need is late. We can spot a chain reaction before it happens.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">C · OWNER CHIP</div>
+          <div class="note-title">Who has the ball.</div>
+          <div class="note-body">Single owner is preferred. "Both" is allowed but discouraged. The chip uses the same color system as payers so we can scan ownership across the app.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">D · OTHER VIEWS</div>
+          <div class="note-title">List, calendar, graph.</div>
+          <div class="note-body">Board is the default. List is for bulk edits. Calendar is for the week-of view late in planning. Dependency graph is the "why is this stuck?" view.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= SCREEN 5: INBOX ============= -->
+  <section class="section" id="inbox">
+    <div class="section-num">08 · SCREEN SIX</div>
+    <h2 class="section-title">Inbox. The <em>email translator.</em></h2>
+    <p class="section-lede">
+      Connected to <strong>celesia.atharva@gmail.com</strong>. Each incoming email is auto-classified into intent (estimate, invoice, receipt, contract, informational) using rules and regex, and gets a one-line suggestion of what to do with it. Click Confirm or Edit; the rest of the app updates.
+    </p>
+
+    <div class="with-notes">
+      <div>
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <div class="chrome-dots"><div class="chrome-dot"></div><div class="chrome-dot"></div><div class="chrome-dot"></div></div>
+            <div class="chrome-url">app.atharvaceleesia.wedding · Inbox</div>
+          </div>
+          <div class="app">
+            <aside class="app-rail">
+              <div class="app-brand">A &amp; <em>C</em></div>
+              <div class="app-brand-sub">12.11.27</div>
+              <div class="nav-section">
+                <div class="nav-label">Plan</div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+                  Dashboard
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                  Vendors
+                </div>
+                <div class="nav-item">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l4 4-4 4M9 11h4"/></svg>
+                  Tasks <span class="badge">3</span>
+                </div>
+                <div class="nav-item active">
+                  <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l6 5 6-5M2 4v8h12V4"/></svg>
+                  Inbox <span class="badge">7</span>
+                </div>
+              </div>
+            </aside>
+
+            <main class="app-main">
+              <div class="topbar">
+                <div>
+                  <div class="display" style="font-size: 28px;">Inbox</div>
+                  <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">
+                    Connected to <strong style="color:var(--ink)">celesia.atharva@gmail.com</strong> · 7 awaiting review · 142 processed
+                  </div>
+                </div>
+                <div class="topbar-right">
+                  <div class="pill">↑ Upload PDF</div>
+                </div>
+              </div>
+
+              <div class="filter-row">
+                <div class="filter-pill active">Awaiting review · 7</div>
+                <div class="filter-pill">All emails</div>
+                <div class="filter-pill">Receipts</div>
+                <div class="filter-pill">Estimates</div>
+                <div class="filter-pill">Contracts</div>
+                <div class="filter-pill">Ignored</div>
+              </div>
+
+              <div class="inbox-list panel" style="padding: 0;">
+                <!-- Receipt match -->
+                <div class="inbox-row unread">
+                  <div class="inbox-status"></div>
+                  <div>
+                    <div class="inbox-from">Camp Lucy Billing</div>
+                    <div class="inbox-subject">Receipt · Wire confirmation #CL-2026-0291</div>
+                    <div class="inbox-suggest">
+                      Looks like a <strong>receipt for $11,374</strong>.
+                      Match against <strong>Venue · Initial deposit (40%)</strong> scheduled today?
+                      <div class="inbox-actions">
+                        <button class="btn btn-primary">Match &amp; mark paid</button>
+                        <button class="btn">Edit</button>
+                        <button class="btn btn-ghost">Ignore</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inbox-intent">RECEIPT<br><span style="color:var(--teal); font-weight: 600;">98% match</span></div>
+                  <div class="inbox-amount">$11,374</div>
+                </div>
+
+                <!-- Estimate -->
+                <div class="inbox-row unread">
+                  <div class="inbox-status"></div>
+                  <div>
+                    <div class="inbox-from">Alexa Patel · Patel Photography</div>
+                    <div class="inbox-subject">Updated quote · multi-day premium package</div>
+                    <div class="inbox-suggest">
+                      Looks like a <strong>revised estimate</strong> from a known vendor.
+                      Replace existing $7,800 estimate with <strong>$8,400</strong>?
+                      <div class="inbox-actions">
+                        <button class="btn btn-primary">Update estimate</button>
+                        <button class="btn">Save as new</button>
+                        <button class="btn btn-ghost">Ignore</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inbox-intent">ESTIMATE<br><span style="color:var(--gold); font-weight: 600;">known vendor</span></div>
+                  <div class="inbox-amount">$8,400</div>
+                </div>
+
+                <!-- Invoice -->
+                <div class="inbox-row unread">
+                  <div class="inbox-status"></div>
+                  <div>
+                    <div class="inbox-from">Stedman Hall Coordination</div>
+                    <div class="inbox-subject">Invoice · 50% deposit · due May 7</div>
+                    <div class="inbox-suggest">
+                      Looks like an <strong>invoice for $1,000</strong>.
+                      Schedule payment against <strong>Planner contract</strong>, payer Atharva's parents?
+                      <div class="inbox-actions">
+                        <button class="btn btn-primary">Schedule payment</button>
+                        <button class="btn">Edit</button>
+                        <button class="btn btn-ghost">Ignore</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inbox-intent">INVOICE<br><span style="color:var(--gold); font-weight: 600;">known vendor</span></div>
+                  <div class="inbox-amount">$1,000</div>
+                </div>
+
+                <!-- Contract -->
+                <div class="inbox-row unread">
+                  <div class="inbox-status"></div>
+                  <div>
+                    <div class="inbox-from">Sound Society DJ</div>
+                    <div class="inbox-subject">Contract v2 attached for signature</div>
+                    <div class="inbox-suggest">
+                      Looks like a <strong>contract draft for $5,500</strong>.
+                      Attach to vendor record &amp; remind us to sign?
+                      <div class="inbox-actions">
+                        <button class="btn btn-primary">Attach &amp; remind</button>
+                        <button class="btn">Edit</button>
+                        <button class="btn btn-ghost">Ignore</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inbox-intent">CONTRACT<br><span style="color:var(--ink-muted);">needs human</span></div>
+                  <div class="inbox-amount">$5,500</div>
+                </div>
+
+                <!-- Informational -->
+                <div class="inbox-row">
+                  <div class="inbox-status"></div>
+                  <div>
+                    <div class="inbox-from">Bloom &amp; Co · Sarah Reeves</div>
+                    <div class="inbox-subject">Re: mandap florals · scope clarification questions</div>
+                    <div class="inbox-suggest" style="border-left-color: var(--slate);">
+                      Looks like an <strong>informational reply</strong>. Not a financial event.
+                      Mark as read &amp; create a "respond to florist" task?
+                      <div class="inbox-actions">
+                        <button class="btn btn-primary">Create task</button>
+                        <button class="btn">Edit</button>
+                        <button class="btn btn-ghost">Just mark read</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inbox-intent">INFO<br><span style="color:var(--ink-muted);">no $$ inferred</span></div>
+                  <div class="inbox-amount" style="color:var(--ink-subtle)">—</div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <div class="note-marker">A · INTENT</div>
+          <div class="note-title">Five buckets, color-coded.</div>
+          <div class="note-body">Receipt · Invoice · Estimate · Contract · Info. Confidence label tells us how sure the parser is. We always see this before deciding.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">B · SUGGESTION</div>
+          <div class="note-title">One sentence + three buttons.</div>
+          <div class="note-body">"Looks like a receipt for $X. Match against Y?" Confirm, Edit, or Ignore. Never silent. Never destructive.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">C · MATCHING</div>
+          <div class="note-title">98% match earns confidence.</div>
+          <div class="note-body">Receipts that cleanly match a scheduled payment by amount + vendor + date show high confidence. Anything ambiguous lands in "Edit" mode by default.</div>
+        </div>
+        <div class="note">
+          <div class="note-marker">D · NO REPLY UI</div>
+          <div class="note-title">We never send from here.</div>
+          <div class="note-body">Per safety rules, the tool reads from the dedicated inbox but never replies. Replies happen in Gmail. The "create task" action just files a reminder.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= DATA ARCHITECTURE SECTION ============= -->
+  <section class="section" id="data">
+    <div class="section-num">09 · DATA ARCHITECTURE</div>
+    <h2 class="section-title">Live data + a <em>spreadsheet shadow.</em></h2>
+    <p class="section-lede">
+      The app needs to be <strong>fast for us, auditable for everyone, and editable in a fallback when the app is down or unfamiliar to whoever's looking.</strong> The right answer: Postgres as the source of truth, auto-mirrored to a Google Sheet every five minutes. The app stays snappy. The Sheet is a live read-only window — family can open it, Atharva can build pivot tables on top of it, and if anything ever breaks, the Sheet is the backup that rebuilds the database.
+    </p>
+
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; font-weight: 400; margin-bottom: 16px; margin-top: 12px; letter-spacing: -0.01em;">Three architectures considered</h3>
+
+    <div class="arch-options">
+      <!-- Option A -->
+      <div class="arch-card">
+        <div class="arch-card-label">OPTION A</div>
+        <div class="arch-card-title">Google Sheet <em>is</em> the database</div>
+        <div class="arch-card-diagram">
+          App ↔ Sheets API<br>
+          (read/write on every request)
+        </div>
+        <div class="arch-pro">Auditable by design · revision history is free</div>
+        <div class="arch-pro">Family edits directly · no separate UI to learn</div>
+        <div class="arch-pro">Zero infrastructure to deploy</div>
+        <div class="arch-con">Slow · 200–500ms per call · cold-start pages take 2–3s</div>
+        <div class="arch-con">Rate limits matter for batch operations</div>
+        <div class="arch-con">No transactions · concurrent edits clash</div>
+        <div class="arch-con">No proper foreign keys · referential integrity is on you</div>
+      </div>
+
+      <!-- Option B -->
+      <div class="arch-card">
+        <div class="arch-card-label">OPTION B</div>
+        <div class="arch-card-title">Postgres + <em>nightly</em> export to Sheet</div>
+        <div class="arch-card-diagram">
+          App ↔ Postgres<br>
+          Postgres → nightly cron → Sheet
+        </div>
+        <div class="arch-pro">Fast app · proper relational integrity</div>
+        <div class="arch-pro">Sheet still exists as a backup</div>
+        <div class="arch-con">Sheet is stale for up to 24 hours</div>
+        <div class="arch-con">Not "live" in the way you asked for</div>
+        <div class="arch-con">Two systems · two places to look</div>
+      </div>
+
+      <!-- Option C — RECOMMENDED -->
+      <div class="arch-card recommended">
+        <div class="arch-recommend-tag">RECOMMENDED</div>
+        <div class="arch-card-label">OPTION C</div>
+        <div class="arch-card-title">Postgres + <em>5-min mirror</em> to Sheet</div>
+        <div class="arch-card-diagram">
+          App ↔ Postgres (real-time)<br>
+          Postgres → 5-min cron → Sheet
+        </div>
+        <div class="arch-pro">App is snappy · sub-100ms reads</div>
+        <div class="arch-pro">Sheet is live-enough (5-min lag is invisible)</div>
+        <div class="arch-pro">Sheet revision history = free audit trail</div>
+        <div class="arch-pro">Family gets a familiar interface to look at</div>
+        <div class="arch-pro">Sheet snapshot becomes a true backup</div>
+        <div class="arch-con">Slightly more setup · one cron job to maintain</div>
+      </div>
+    </div>
+
+    <div class="impl-note">
+      <span class="impl-label">Alternative worth knowing about</span>
+      <strong>Airtable</strong> could replace both Postgres and the Sheet. It's a spreadsheet-shaped database with native record history, sharable views, and a generous API. The 1,000-record free tier covers this wedding easily. The reason it's not the recommendation: Vercel + Postgres is a tighter native integration and gives you full SQL when you want it, which on a data-flavored project you probably will.
+    </div>
+
+    <!-- The recommended architecture diagram -->
+    <h3 style="font-family: 'Fraunces', serif; font-size: 22px; font-weight: 400; margin: 48px 0 16px; letter-spacing: -0.01em;">How the pieces fit together</h3>
+
+    <div class="arch">
+      <svg viewBox="0 0 1100 460" style="width: 100%; height: auto; font-family: 'DM Sans';">
+        <defs>
+          <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#F1E9D7" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6B5F54"/>
+          </marker>
+        </defs>
+        <rect width="1100" height="460" fill="url(#grid2)" opacity="0.4"/>
+
+        <!-- USERS -->
+        <g transform="translate(40, 40)">
+          <rect width="180" height="70" rx="8" fill="#F1E9D7" stroke="#1A1614" stroke-width="1"/>
+          <text x="16" y="24" font-size="11" fill="#1A1614" font-family="JetBrains Mono">USERS</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">Atharva · Celesia</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">+ family · planner</text>
+        </g>
+
+        <!-- VERCEL APP -->
+        <g transform="translate(290, 40)">
+          <rect width="220" height="70" rx="8" fill="#FFFEFB" stroke="#B8451E" stroke-width="2"/>
+          <text x="16" y="24" font-size="11" fill="#B8451E" font-family="JetBrains Mono">VERCEL · NEXT.JS</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">The web app</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">desktop-first · auth gate</text>
+        </g>
+
+        <!-- POSTGRES -->
+        <g transform="translate(580, 40)">
+          <rect width="200" height="70" rx="8" fill="#FFFEFB" stroke="#3A6256" stroke-width="2"/>
+          <text x="16" y="24" font-size="11" fill="#3A6256" font-family="JetBrains Mono">VERCEL POSTGRES</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">Source of truth</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">+ activity_log table</text>
+        </g>
+
+        <!-- GMAIL -->
+        <g transform="translate(40, 180)">
+          <rect width="180" height="70" rx="8" fill="#FFFEFB" stroke="#9A3F23" stroke-width="1.5"/>
+          <text x="16" y="24" font-size="11" fill="#9A3F23" font-family="JetBrains Mono">GMAIL · OAUTH</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">celesia.atharva@</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">read-only · vendor inbox</text>
+        </g>
+
+        <!-- CRON -->
+        <g transform="translate(290, 180)">
+          <rect width="220" height="70" rx="8" fill="#FFFEFB" stroke="#C9913A" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="16" y="24" font-size="11" fill="#C9913A" font-family="JetBrains Mono">VERCEL CRON</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">Two scheduled jobs</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">poll Gmail · sync to Sheet</text>
+        </g>
+
+        <!-- GOOGLE SHEET -->
+        <g transform="translate(580, 180)">
+          <rect width="200" height="70" rx="8" fill="#F1E9D7" stroke="#6F8266" stroke-width="2"/>
+          <text x="16" y="24" font-size="11" fill="#6F8266" font-family="JetBrains Mono">GOOGLE SHEET · LIVE</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">Read-only mirror</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">one tab per table</text>
+        </g>
+
+        <!-- FAMILY -->
+        <g transform="translate(850, 180)">
+          <rect width="210" height="70" rx="8" fill="#FFFEFB" stroke="#4A5560" stroke-width="1"/>
+          <text x="16" y="24" font-size="11" fill="#4A5560" font-family="JetBrains Mono">FAMILY · PLANNER</text>
+          <text x="16" y="44" font-size="13" fill="#1A1614" font-weight="500">Open the Sheet</text>
+          <text x="16" y="60" font-size="11" fill="#6B5F54">share link · read-only</text>
+        </g>
+
+        <!-- The data model below -->
+        <g transform="translate(40, 320)">
+          <rect width="1020" height="120" rx="10" fill="#FFFEFB" stroke="#E5DBC6" stroke-width="1"/>
+          <text x="20" y="28" font-size="11" fill="#A0958A" font-family="JetBrains Mono">SIX CORE TABLES (THE DATA MODEL, SIMPLIFIED)</text>
+
+          <!-- Mini boxes for each entity -->
+          <g transform="translate(20, 50)">
+            <rect width="140" height="55" rx="6" fill="#F8F2E6" stroke="#B8451E" stroke-width="1"/>
+            <text x="12" y="20" font-size="10" fill="#B8451E" font-family="JetBrains Mono">vendors</text>
+            <text x="12" y="38" font-size="11" fill="#1A1614">Camp Lucy, etc.</text>
+            <text x="12" y="50" font-size="9" fill="#6B5F54">14 records</text>
+          </g>
+          <g transform="translate(180, 50)">
+            <rect width="140" height="55" rx="6" fill="#F8F2E6" stroke="#3A6256" stroke-width="1"/>
+            <text x="12" y="20" font-size="10" fill="#3A6256" font-family="JetBrains Mono">contracts</text>
+            <text x="12" y="38" font-size="11" fill="#1A1614">signed deals</text>
+            <text x="12" y="50" font-size="9" fill="#6B5F54">3 records</text>
+          </g>
+          <g transform="translate(340, 50)">
+            <rect width="140" height="55" rx="6" fill="#F8F2E6" stroke="#C9913A" stroke-width="1"/>
+            <text x="12" y="20" font-size="10" fill="#C9913A" font-family="JetBrains Mono">payments</text>
+            <text x="12" y="38" font-size="11" fill="#1A1614">due &amp; paid</text>
+            <text x="12" y="50" font-size="9" fill="#6B5F54">12 records</text>
+          </g>
+          <g transform="translate(500, 50)">
+            <rect width="140" height="55" rx="6" fill="#F8F2E6" stroke="#9A3F23" stroke-width="1"/>
+            <text x="12" y="20" font-size="10" fill="#9A3F23" font-family="JetBrains Mono">payers</text>
+            <text x="12" y="38" font-size="11" fill="#1A1614">3 entities</text>
+            <text x="12" y="50" font-size="9" fill="#6B5F54">A's parents · C's mom · us</text>
+          </g>
+          <g transform="translate(660, 50)">
+            <rect width="140" height="55" rx="6" fill="#F8F2E6" stroke="#4A5560" stroke-width="1"/>
+            <text x="12" y="20" font-size="10" fill="#4A5560" font-family="JetBrains Mono">tasks</text>
+            <text x="12" y="38" font-size="11" fill="#1A1614">checklist + deps</text>
+            <text x="12" y="50" font-size="9" fill="#6B5F54">152 records</text>
+          </g>
+          <g transform="translate(820, 50)">
+            <rect width="180" height="55" rx="6" fill="#F8F2E6" stroke="#6F8266" stroke-width="1"/>
+            <text x="12" y="20" font-size="10" fill="#6F8266" font-family="JetBrains Mono">email_items</text>
+            <text x="12" y="38" font-size="11" fill="#1A1614">parsed inbox</text>
+            <text x="12" y="50" font-size="9" fill="#6B5F54">149 records · 7 pending</text>
+          </g>
+        </g>
+
+        <!-- arrows -->
+        <g stroke="#6B5F54" fill="none" stroke-width="1.3">
+          <!-- Users <-> App -->
+          <path d="M 220 75 L 290 75" marker-end="url(#arr2)"/>
+          <path d="M 290 90 L 220 90" marker-end="url(#arr2)"/>
+          <!-- App <-> Postgres -->
+          <path d="M 510 75 L 580 75" marker-end="url(#arr2)"/>
+          <path d="M 580 90 L 510 90" marker-end="url(#arr2)"/>
+          <!-- Gmail -> Cron -->
+          <path d="M 220 215 L 290 215" marker-end="url(#arr2)"/>
+          <!-- Cron -> Postgres (write parsed emails) -->
+          <path d="M 400 180 Q 450 130, 680 110" marker-end="url(#arr2)" stroke-dasharray="3,3"/>
+          <!-- Postgres -> Cron (read for sync) -->
+          <path d="M 680 110 Q 600 140, 510 200" marker-end="url(#arr2)" stroke-dasharray="3,3"/>
+          <!-- Cron -> Sheet -->
+          <path d="M 510 215 L 580 215" marker-end="url(#arr2)"/>
+          <!-- Sheet -> Family -->
+          <path d="M 780 215 L 850 215" marker-end="url(#arr2)"/>
+        </g>
+
+        <!-- Captions -->
+        <text x="255" y="68" font-size="10" fill="#A0958A" text-anchor="middle">UI</text>
+        <text x="545" y="68" font-size="10" fill="#A0958A" text-anchor="middle">SQL</text>
+        <text x="255" y="208" font-size="10" fill="#A0958A" text-anchor="middle">poll 5m</text>
+        <text x="545" y="208" font-size="10" fill="#A0958A" text-anchor="middle">sync 5m</text>
+        <text x="815" y="208" font-size="10" fill="#A0958A" text-anchor="middle">view</text>
+      </svg>
+
+      <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; font-size: 13px; color: var(--ink-muted);">
+        <div>
+          <div style="font-weight: 500; color: var(--ink); margin-bottom: 4px;">Live in-app, always.</div>
+          Edits go straight to Postgres. Other browser tabs revalidate every 30 seconds via SWR. For two-to-three people, that's "live enough."
+        </div>
+        <div>
+          <div style="font-weight: 500; color: var(--ink); margin-bottom: 4px;">Auditable, three ways.</div>
+          (1) <span class="mono" style="font-size: 12px;">activity_log</span> table records every change with user + timestamp + diff. (2) Google Sheet revision history. (3) Sheet is a snapshot you can always roll back from.
+        </div>
+        <div>
+          <div style="font-weight: 500; color: var(--ink); margin-bottom: 4px;">Family-visible.</div>
+          Share the Sheet read-only with anyone. They see vendors, contracts, payments, tasks — one tab per table — without needing app accounts.
+        </div>
+      </div>
+    </div>
+
+    <div class="impl-note">
+      <span class="impl-label">A note on access</span>
+      You said "anyone for now." A Vercel-hosted app with no auth means anyone who finds the URL sees the full budget and every payer detail. Even <em>obscure</em> URLs leak (a screenshot, a forwarded link). Recommend the lightest possible auth: <strong>magic-link via Resend with an email allowlist.</strong> ~30 lines of code, no passwords to manage, you control who has access by editing a list. Family gets in by entering their email; the Sheet stays the share-with-everyone surface. This is the kind of safety net that costs nothing today and prevents one bad day eighteen months from now.
+    </div>
+  </section>
+
+  <!-- ============= DECISIONS SECTION ============= -->
+  <section class="section" id="decisions">
+    <div class="section-num">10 · DECISIONS</div>
+    <h2 class="section-title">All six questions, <em>answered.</em></h2>
+    <p class="section-lede">
+      Locked in. Claude Code can treat these as constraints, not options.
+    </p>
+
+    <div class="questions">
+      <div class="question">
+        <div class="question-num">01</div>
+        <div class="question-text">
+          <strong>Hosted web app on Vercel.</strong>
+          <em>Next.js (App Router) + TypeScript · Vercel hosting · Vercel Postgres · Vercel Cron for scheduled jobs. Native, free-tier-friendly stack, one vendor for the whole loop.</em>
+        </div>
+      </div>
+      <div class="question">
+        <div class="question-num">02</div>
+        <div class="question-text">
+          <strong>Dedicated Gmail: <span class="mono" style="font-size: 13px;">celesia.atharva@gmail.com</span></strong>
+          <em>Gmail OAuth2, read-only scope, polled every 5 minutes via Vercel Cron. The app never sends from this address — replies happen in Gmail directly.</em>
+        </div>
+      </div>
+      <div class="question">
+        <div class="question-num">03</div>
+        <div class="question-text">
+          <strong>Open access for now · with magic-link allowlist suggested.</strong>
+          <em>No role-based permissions. Everyone who's signed in can see and edit everything. The Sheet mirror is the share-with-anyone surface.</em>
+        </div>
+      </div>
+      <div class="question">
+        <div class="question-num">04</div>
+        <div class="question-text">
+          <strong>Desktop-first.</strong>
+          <em>Layouts above are sized for 1280px+ screens. Mobile works but is not optimized. Phone is for glancing, laptop is for editing.</em>
+        </div>
+      </div>
+      <div class="question">
+        <div class="question-num">05</div>
+        <div class="question-text">
+          <strong>Rules + regex parsing in V1.</strong>
+          <em>Heuristics for amount extraction, sender-domain matching against vendors, intent classification by subject keywords. LLM-assisted parsing is a V2 upgrade if accuracy is poor — gate it on actual evidence.</em>
+        </div>
+      </div>
+      <div class="question">
+        <div class="question-num">06</div>
+        <div class="question-text">
+          <strong>Budget locked at $142,682 · editable via the Budget Editor.</strong>
+          <em>The locked baseline is the No Brunch / Mid Dec scenario. Edits are tracked as variance from baseline. "Save as scenario" lets us try alternatives without losing the locked number.</em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="doc-footer">
+    <div>Wedding planning tool · visual design spec · v4 · locked</div>
+    <div class="mono">A &amp; C · 12.11.27</div>
+  </footer>
+
+</div>
+</body>
+</html>

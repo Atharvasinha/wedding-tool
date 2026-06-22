@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #F8F2E6;
+  --cream-soft: #F1E9D7;
+  --cream-deep: #EADFC6;
+  --ink: #1A1614;
+  --ink-soft: #3A3330;
+  --ink-muted: #736961;
+  --terracotta: #B8451E;
+  --terracotta-soft: #E8C8B7;
+  --gold: #C9913A;
+  --teal: #3A6256;
+  --sage: #7A8B6B;
+  --rule: #D9CFB9;
+}
+
+html, body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.display { font-family: var(--font-display), Georgia, serif; }
+.mono { font-family: var(--font-mono), ui-monospace, monospace; }
