@@ -57,11 +57,44 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // ?mode=tasks-only — re-seed only tasks (additive, used after fixing xlsx path)
+  const mode = new URL(req.url).searchParams.get("mode");
+  if (mode === "tasks-only") {
+    const tasks = parseTasks();
+    if (!tasks || tasks.length === 0) {
+      return NextResponse.json({ ok: false, error: "No tasks parsed from xlsx" }, { status: 500 });
+    }
+    const existingTasks = await prisma.tasks.count();
+    if (existingTasks > 0) {
+      return NextResponse.json(
+        { ok: false, error: `Already have ${existingTasks} tasks. Use ?mode=tasks-replace to wipe + reseed.` },
+        { status: 409 },
+      );
+    }
+    await prisma.$transaction(
+      tasks.map((t) =>
+        prisma.tasks.create({
+          data: {
+            title: t.title,
+            category: t.category ?? null,
+            owner: t.owner ?? null,
+            due_date: t.due_date ?? null,
+            timeframe_label: t.timeframe ?? null,
+            priority: t.priority,
+            status: t.status,
+            source: "template",
+          },
+        }),
+      ),
+    );
+    return NextResponse.json({ ok: true, mode: "tasks-only", tasks: tasks.length });
+  }
+
   // Idempotency guard — refuse if data already seeded
   const existing = await prisma.payers.count();
   if (existing > 0) {
     return NextResponse.json(
-      { ok: false, error: `Already seeded (${existing} payers exist). Refusing to clobber.` },
+      { ok: false, error: `Already seeded (${existing} payers exist). Refusing to clobber. Use ?mode=tasks-only to add tasks.` },
       { status: 409 },
     );
   }
@@ -139,7 +172,7 @@ type ParsedTask = {
 };
 
 function parseBudget(): ParsedBudget[] | null {
-  const xlsxPath = path.join(process.cwd(), "seed-data.xlsx");
+  const xlsxPath = path.join(process.cwd(), "public", "seed-data.xlsx");
   if (!fs.existsSync(xlsxPath)) return null;
   try {
     const wb = XLSX.readFile(xlsxPath);
@@ -161,7 +194,7 @@ function parseBudget(): ParsedBudget[] | null {
 }
 
 function parseTasks(): ParsedTask[] | null {
-  const xlsxPath = path.join(process.cwd(), "seed-data.xlsx");
+  const xlsxPath = path.join(process.cwd(), "public", "seed-data.xlsx");
   if (!fs.existsSync(xlsxPath)) return null;
   try {
     const wb = XLSX.readFile(xlsxPath);

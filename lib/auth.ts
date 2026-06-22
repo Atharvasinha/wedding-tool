@@ -1,5 +1,10 @@
-// Phase 1: there is no real auth. Mutations attribute all activity to the
-// hardcoded current user. Real magic-link auth lands in Phase 5.
-export function getCurrentUserEmail(): string {
-  return process.env.CURRENT_USER_EMAIL ?? "atharva.r.sinha@gmail.com";
+import { getCurrentSession } from "@/lib/auth/session";
+
+// Returns the email of the currently signed-in user. Falls back to the
+// CURRENT_USER_EMAIL env var only for unauthenticated server contexts
+// (e.g. cron handlers that need to attribute activity_log writes).
+export async function getCurrentUserEmail(): Promise<string> {
+  const session = await getCurrentSession();
+  if (session) return session.email;
+  return process.env.CURRENT_USER_EMAIL ?? "system";
 }

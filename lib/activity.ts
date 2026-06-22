@@ -25,7 +25,7 @@ export async function logActivity({
       entity_type: entityType,
       entity_id: entityId,
       action,
-      changed_by: changedBy ?? getCurrentUserEmail(),
+      changed_by: changedBy ?? (await getCurrentUserEmail()),
       diff_summary: summary ?? null,
       diff_json:
         before === undefined && after === undefined

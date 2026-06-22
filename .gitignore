@@ -40,3 +40,5 @@ yarn-error.log*
 
 # attachments downloaded by gmail poll — local-only, contains email content
 .attachments/
+
+.vercel
