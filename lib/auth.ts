@@ -1,10 +1,5 @@
-import { getCurrentSession } from "@/lib/auth/session";
-
-// Returns the email of the currently signed-in user. Falls back to the
-// CURRENT_USER_EMAIL env var only for unauthenticated server contexts
-// (e.g. cron handlers that need to attribute activity_log writes).
+// No real auth — wedding tool runs unprotected on its Vercel URL by design.
+// This stub exists so activity_log writes can attribute mutations to a "user".
 export async function getCurrentUserEmail(): Promise<string> {
-  const session = await getCurrentSession();
-  if (session) return session.email;
-  return process.env.CURRENT_USER_EMAIL ?? "system";
+  return process.env.CURRENT_USER_EMAIL ?? "atharva.r.sinha@gmail.com";
 }

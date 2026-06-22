@@ -1,21 +1,13 @@
 import { getAllPayers } from "@/lib/db/payers";
-import { prisma } from "@/lib/db/client";
 import { Money } from "@/components/Money";
 import { PayerRow } from "./PayerRow";
 import { AddPayerInline } from "./AddPayerInline";
-import { AllowlistTable } from "./AllowlistTable";
 import { SyncSheetsButton } from "./SyncSheetsButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [payers, allowedUsers] = await Promise.all([
-    getAllPayers(),
-    prisma.allowed_users.findMany({
-      orderBy: { added_at: "asc" },
-      select: { id: true, email: true, name: true },
-    }),
-  ]);
+  const payers = await getAllPayers();
   const sheetsConfigured = !!process.env.SHEETS_MIRROR_ID && !!process.env.GOOGLE_SERVICE_ACCOUNT_KEY_B64;
 
   return (
@@ -54,15 +46,6 @@ export default async function SettingsPage() {
 
       <section className="mt-12">
         <div className="flex items-baseline justify-between border-b border-rule pb-2">
-          <h2 className="display text-[20px] italic">Allowlist</h2>
-          <div className="text-[11px] uppercase tracking-widest text-ink-muted">{allowedUsers.length} user{allowedUsers.length === 1 ? "" : "s"}</div>
-        </div>
-        <p className="text-xs text-ink-muted mt-2 mb-4">Only these addresses can sign in to the app.</p>
-        <AllowlistTable users={allowedUsers} />
-      </section>
-
-      <section className="mt-12">
-        <div className="flex items-baseline justify-between border-b border-rule pb-2">
           <h2 className="display text-[20px] italic">Google Sheet mirror</h2>
         </div>
         <p className="text-xs text-ink-muted mt-2 mb-4">
@@ -72,7 +55,7 @@ export default async function SettingsPage() {
       </section>
 
       <div className="mt-12 rounded-lg border border-rule bg-cream-soft/30 p-5 text-xs text-ink-muted">
-        Wedding baseline is locked at <Money cents={BigInt(14268200)} />. <a href="/auth/logout" className="text-terracotta hover:underline ml-2">Sign out</a>
+        Wedding baseline is locked at <Money cents={BigInt(14268200)} />.
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 {
   "crons": [
     { "path": "/api/cron/poll-gmail", "schedule": "0 13 * * *" },
-    { "path": "/api/cron/sync-sheets", "schedule": "30 13 * * *" },
-    { "path": "/api/cron/digest", "schedule": "0 14 * * *" }
+    { "path": "/api/cron/sync-sheets", "schedule": "30 13 * * *" }
   ]
 }
+
 
 
